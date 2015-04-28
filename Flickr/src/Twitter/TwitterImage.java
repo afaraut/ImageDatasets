@@ -1,6 +1,6 @@
-package Flickr;
+package Twitter;
 
-public class FlickrImage {
+public class TwitterImage {
 
 	private String id;
 	private String server;
@@ -8,17 +8,15 @@ public class FlickrImage {
 	private String originalformat;
 	private String secret;
 	private String candownload;
-	private int farm; 
 
-	public FlickrImage(String id, String server, String secret,
-			String originalsecret, String originalformat, String candownload, int farm) {
+	public TwitterImage(String id, String server, String secret,
+			String originalsecret, String originalformat, String candownload) {
 		this.id = id;
 		this.server = server;
 		this.secret = secret;
 		this.originalsecret = originalsecret;
 		this.originalformat = originalformat;
 		this.candownload = candownload;
-		this.farm = farm;
 	}
 
 	public String getId() {
@@ -43,10 +41,6 @@ public class FlickrImage {
 
 	public String getCandownload() {
 		return candownload;
-	}
-	
-	public int getFarm() {
-		return farm;
 	}
 
 	public String toString() {

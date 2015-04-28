@@ -11,13 +11,35 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
+import Utils.GlobalesConstantes;
 public class FlickrSearch {
 
-	private ArrayList<FlickrImage> getFlickrRessources(String text)	throws IOException, JSONException {
+	private String repertoire;
+	private String text;
+	private Double latitude;
+	private Double longitude;
+	
+	public FlickrSearch (String repertoire, String text, Double latitude, Double longitude){
+		this.repertoire = repertoire;
+		this.text = text;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+	
+	private ArrayList<FlickrImage> getFlickrRessources()	throws IOException, JSONException {
 		ArrayList<FlickrImage> list = new ArrayList<FlickrImage>();
-		String baseUrl = "https://query.yahooapis.com/v1/public/yql?q="; // and text='" + text + "' 
-		String query = "select * from flickr.photos.search where has_geo='true' and lat='43.7077201' and lon='7.3343701' and api_key="+ FlickrConstantes.APIKEY + ";";
+		String baseUrl = "https://query.yahooapis.com/v1/public/yql?q=";
+		String query = "select * from flickr.photos.search where has_geo='true' and api_key="+ FlickrConstantes.APIKEY;
+				
+		if (text != null) 
+			query = query.concat(" and text='" + text + "'");
+		if (latitude != null)
+			query = query.concat(" and lat='" + latitude + "'");
+		if (longitude != null)
+			query = query.concat(" and lon='" + longitude + "'");
+		
+		query = query.concat(";");
+		
 		String fullUrlStr = baseUrl + URLEncoder.encode(query, "UTF-8")	+ "&format=json";
 
 		URL fullUrl = new URL(fullUrlStr);
@@ -44,7 +66,7 @@ public class FlickrSearch {
 					jsonPhoto.optString("secret"),
 					jsonPInfos.optString("originalsecret"),
 					jsonPInfos.optString("originalformat"), jsonPInfos
-							.getJSONObject("usage").optString("candownload"));
+							.getJSONObject("usage").optString("candownload"), jsonPInfos.optInt("farm"));
 			list.add(flickrImage);
 		}
 		inputStream.close();
@@ -52,22 +74,26 @@ public class FlickrSearch {
 	}
 
 	public void getFlickrImages() throws IOException, JSONException {
-		ArrayList<FlickrImage> list = getFlickrRessources("Beaulieu sur mer");
+		ArrayList<FlickrImage> list = getFlickrRessources();
+		
+	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
+			// Créer le dossier avec tous ses parents
+			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
+	     }
+		
 		for (FlickrImage fi : list) {
 			if (fi.getCandownload().equals("1")) {
-				URL url = new URL("https://farm8.staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getOriginalsecret() + "_o."+ fi.getOriginalformat());
+				URL url = new URL("https://farm"+fi.getFarm()+".staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getOriginalsecret() + "_o."+ fi.getOriginalformat());
 				BufferedImage image = ImageIO.read(url);
-				ImageIO.write(image,"jpg",new File("D:\\flickr_test\\" + fi.getId() + "."+ fi.getOriginalformat()));
+				if (image != null)
+					ImageIO.write(image,"jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + "."+ fi.getOriginalformat()));
 			} else {
-				URL url = new URL("https://farm8.staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getSecret() + "_b.jpg");
+				URL url = new URL("https://farm"+fi.getFarm()+".staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getSecret() + "_b.jpg");
+				//System.out.println(url);
 				BufferedImage image = ImageIO.read(url);
-				ImageIO.write(image, "jpg",new File("D:\\flickr_test\\" + fi.getId() + ".jpg"));
+				if (image != null)
+					ImageIO.write(image, "jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + ".jpg"));
 			}
 		}
-	}
-
-	public static void main(String args[]) throws Exception {
-		FlickrSearch m = new FlickrSearch();
-		m.getFlickrImages();
 	}
 }
