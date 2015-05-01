@@ -1,9 +1,14 @@
 package Twitter;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +20,8 @@ import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
+
+import Utils.GlobalesConstantes;
 
 public class TwitterSearch {
 
@@ -82,7 +89,7 @@ public class TwitterSearch {
 			request = new OAuthRequest(Verb.GET, requete);
 			service.signRequest(accessToken, request);
 			response = request.send();
-			System.out.println("Get the pictures from the tweet... [" + i + "/" + nombreDeTweet + "]");
+			System.out.println("Get the pictures from the tweet... [" + new Integer(i+1) + "/" + nombreDeTweet + "]");
 			result = new JSONObject(response.getBody());
 			JSONArray medias = result.getJSONObject("extended_entities").getJSONArray("media");
 			int nombreDeMedia = medias.length();
@@ -99,22 +106,18 @@ public class TwitterSearch {
 
 	public void getTwitterImages() throws IOException, JSONException, URISyntaxException {
 		ArrayList<TwitterImage> list = getTwitterRessources();
+	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
+			// Créer le dossier avec tous ses parents
+			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
+	     }
 		
-		for (TwitterImage fi : list) {
-			System.out.println(fi);
-		}
-		
-		/*for (TwitterImage fi : list) {
-			if (fi.getCandownload().equals("1")) {
-				URL url = new URL("https://farm8.staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getOriginalsecret() + "_o."+ fi.getOriginalformat());
+		for (TwitterImage tw : list) {
+			for (String s : tw.getPhotos()) {
+				URL url = new URL(s);
 				BufferedImage image = ImageIO.read(url);
-				ImageIO.write(image,"jpg",new File("D:\\flickr_test\\" + fi.getId() + "."+ fi.getOriginalformat()));
-			} else {
-				URL url = new URL("https://farm8.staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getSecret() + "_b.jpg");
-				BufferedImage image = ImageIO.read(url);
-				ImageIO.write(image, "jpg",new File("D:\\flickr_test\\" + fi.getId() + ".jpg"));
+				String nomFichier = s.split("/")[4];
+				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier));
 			}
-		}*/
+		}
 	}
-
 }

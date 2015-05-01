@@ -1,15 +1,21 @@
 package Flickr;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import Utils.GlobalesConstantes;
 
 public class FlickrSearch {
 
@@ -85,10 +91,7 @@ public class FlickrSearch {
 
 	public void getFlickrImages() throws IOException, JSONException {
 		ArrayList<FlickrImage> list = getFlickrRessources();
-		for (FlickrImage fi : list) {
-			System.out.println(fi);
-		}
-		/*
+		
 	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			// Créer le dossier avec tous ses parents
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
@@ -107,6 +110,6 @@ public class FlickrSearch {
 				if (image != null)
 					ImageIO.write(image, "jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + ".jpg"));
 			}
-		}*/
+		}
 	}
 }
