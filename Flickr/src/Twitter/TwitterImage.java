@@ -1,50 +1,47 @@
 package Twitter;
 
+import java.util.List;
+
 public class TwitterImage {
 
-	private String id;
-	private String server;
-	private String originalsecret;
-	private String originalformat;
-	private String secret;
-	private String candownload;
+	private String link;
+	private List<String> hashtags;
+	private List<String> photos;
 
-	public TwitterImage(String id, String server, String secret,
-			String originalsecret, String originalformat, String candownload) {
-		this.id = id;
-		this.server = server;
-		this.secret = secret;
-		this.originalsecret = originalsecret;
-		this.originalformat = originalformat;
-		this.candownload = candownload;
+	public TwitterImage(String link, List<String> hashtags, List<String> photos) {
+		this.link = link;
+		this.hashtags = hashtags;
+		this.photos = photos;
 	}
 
-	public String getId() {
-		return id;
+	public String getLink() {
+		return link;
 	}
 
-	public String getServer() {
-		return server;
+	public List<String> getHashtags() {
+		return hashtags;
 	}
 
-	public String getOriginalsecret() {
-		return originalsecret;
+	public List<String> getPhotos() {
+		return photos;
 	}
 
-	public String getOriginalformat() {
-		return originalformat;
-	}
-
-	public String getSecret() {
-		return secret;
-	}
-
-	public String getCandownload() {
-		return candownload;
-	}
 
 	public String toString() {
-		return id + " - " + server + " - " + secret;
+		String tmp = link + "\n";
+		
+		tmp = tmp.concat("[");
+		for (String s : hashtags)
+			tmp = tmp.concat(s + ", ");
+		tmp = tmp.substring(0, tmp.length()-2);
+		tmp = tmp.concat("]\n");
+		tmp = tmp.concat("[");
+		for (String s : photos)
+			tmp = tmp.concat(s + ", ");
+		tmp = tmp.substring(0, tmp.length()-2);
+		tmp = tmp.concat("]\n");
+		
+		return tmp;
 	}
 
 }
