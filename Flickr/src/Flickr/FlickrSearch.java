@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,16 +54,11 @@ public class FlickrSearch {
 			query = "select * from flickr.photos.info where photo_id='" + id + "' and api_key=" + FlickrConstantes.APIKEY + ";";
 			
 			fullUrlStr = baseUrl + URLEncoder.encode(query, "UTF-8")+ "&format=json";
-			System.out.println(fullUrlStr);
 			fullUrl = new URL(fullUrlStr);
 			inputStream = fullUrl.openStream();
 
 			result = new JSONObject(new JSONTokener(inputStream));
 			JSONObject jsonPInfos = result.getJSONObject("query").getJSONObject("results").getJSONObject("photo");
-			
-			// --- Description de la photo
-			//
-			String description = jsonPInfos.optString("description");
 			
 			if (!jsonPInfos.isNull("tags")) {
 				JSONArray tags = jsonPInfos.getJSONObject("tags").getJSONArray("tag");
@@ -72,13 +68,15 @@ public class FlickrSearch {
 				}
 			}
 			
+			String link = jsonPInfos.getJSONObject("urls").getJSONObject("url").optString("content");
+			
 			// ------------------------------------
-			FlickrImage flickrImage = new FlickrImage(id,
+			FlickrImage flickrImage = new FlickrImage(id, jsonPInfos.optString("description"), link,
 					jsonPhoto.optString("server"),
 					jsonPhoto.optString("secret"),
 					jsonPInfos.optString("originalsecret"),
 					jsonPInfos.optString("originalformat"), jsonPInfos
-							.getJSONObject("usage").optString("candownload"), jsonPInfos.optInt("farm"));
+							.getJSONObject("usage").optString("candownload"), jsonPInfos.optInt("farm"), hashtags);
 			list.add(flickrImage);
 		}
 		inputStream.close();
@@ -87,6 +85,9 @@ public class FlickrSearch {
 
 	public void getFlickrImages() throws IOException, JSONException {
 		ArrayList<FlickrImage> list = getFlickrRessources();
+		for (FlickrImage fi : list) {
+			System.out.println(fi);
+		}
 		/*
 	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			// Créer le dossier avec tous ses parents

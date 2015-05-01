@@ -31,9 +31,11 @@ public class TwitterImage {
 		String tmp = link + "\n";
 		
 		tmp = tmp.concat("[");
-		for (String s : hashtags)
-			tmp = tmp.concat(s + ", ");
-		tmp = tmp.substring(0, tmp.length()-2);
+		if (hashtags.size() > 0) {
+			for (String s : hashtags)
+				tmp = tmp.concat(s + ", ");
+			tmp = tmp.substring(0, tmp.length()-2);
+		}
 		tmp = tmp.concat("]\n");
 		tmp = tmp.concat("[");
 		for (String s : photos)
