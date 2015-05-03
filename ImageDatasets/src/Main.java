@@ -15,16 +15,16 @@ public class Main {
 		/*FlickrSearch flickr = new FlickrSearch("flickr\\", "mer", 43.7077201, 7.3343701);
 		flickr.getFlickrImages();*/
 		
-		/*TwitterSearch twitter = new TwitterSearch("twitter\\", "mer", 43.50594428, 7.04675669);
-		twitter.getTwitterImages();
+		TwitterSearch twitter = new TwitterSearch("twitter\\", "mer", 43.50594428, 7.04675669);
+		twitter.saveJSON(twitter.getTwitterImages());
 		
-		InstagramWASearch instagramwa = new InstagramWASearch("instagram\\", 43.50594428, 7.04675669);
+		/*InstagramWASearch instagramwa = new InstagramWASearch("instagram\\", 43.50594428, 7.04675669);
 		//InstagramSearch instagram = new InstagramSearch("instagram\\", "mer");
 		instagramwa.getInstagramWAImages();*/
 		
 		//InstagramSearch instagram = new InstagramSearch("instagram\\", 43.50594428, 7.04675669);
-		InstagramSearch instagram = new InstagramSearch("instagram\\", "mer");
-		instagram.saveJSON(instagram.getInstagramImages());
+		/*InstagramSearch instagram = new InstagramSearch("instagram\\", "mer");
+		instagram.saveJSON(instagram.getInstagramImages());*/
 
 	}
 }

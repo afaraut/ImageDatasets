@@ -10,6 +10,7 @@ import org.json.JSONObject;
 public class InstagramWAImage {
 
 	private String link;
+	private String filename;
 	private String photo;
 	private List<String> hashtags;
 	private JSONObject objson;
@@ -17,6 +18,9 @@ public class InstagramWAImage {
 	public InstagramWAImage(String link, String photo, List<String> hashtags){
 		this.link = link;
 		this.photo = photo;
+		String tmp[] = photo.split("/");
+		String tmp_str = tmp[tmp.length-1];
+		this.filename = tmp_str.substring(0, tmp_str.length()-3);
 		this.hashtags = hashtags;
 		this.objson = null;
 	}
@@ -67,6 +71,9 @@ public class InstagramWAImage {
 		return photo;
 	}
 
+	public String getFileName(){
+		return filename;
+	}
 
 	public String toString() {
 		String tmp = link + "\n";

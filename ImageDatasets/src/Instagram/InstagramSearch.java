@@ -38,7 +38,7 @@ public class InstagramSearch {
 	private ArrayList<InstagramImage> getInstagramRessources()	throws IOException, JSONException {
 		ArrayList<InstagramImage> list = new ArrayList<InstagramImage>();
 		String baseUrl = "https://api.instagram.com/v1/";
-		String query = "";// "select * from flickr.photos.search where has_geo='true' and api_key="+ InstagramConstantes.CLIENTID;
+		String query = "";
 		
 		if (text != null) 
 			query = query.concat("tags/" + text + "/media/recent?client_id=" + InstagramConstantes.CLIENTID);

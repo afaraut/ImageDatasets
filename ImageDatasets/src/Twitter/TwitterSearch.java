@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -21,6 +22,7 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
+import Instagram_with_auth.InstagramWAImage;
 import Utils.GlobalesConstantes;
 
 public class TwitterSearch {
@@ -104,7 +106,7 @@ public class TwitterSearch {
 		return list;
 	}
 
-	public void getTwitterImages() throws IOException, JSONException, URISyntaxException {
+	public List<TwitterImage> getTwitterImages() throws IOException, JSONException, URISyntaxException {
 		ArrayList<TwitterImage> list = getTwitterRessources();
 	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			// Créer le dossier avec tous ses parents
@@ -114,9 +116,22 @@ public class TwitterSearch {
 		for (TwitterImage tw : list) {
 			for (String s : tw.getPhotos()) {
 				URL url = new URL(s);
-				BufferedImage image = ImageIO.read(url);
-				String nomFichier = s.split("/")[4];
+				BufferedImage image = ImageIO.read(url);				
+				String tmp[] = s.split("/");
+				String nomFichier = tmp[tmp.length-1];
 				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier));
+			}
+		}
+		return list;
+	}
+	
+	public void saveJSON(List<TwitterImage> list) {
+		for (TwitterImage image : list){
+			for (String s : image.getPhotos()) {
+				String tmp[] = s.split("/");
+				String nomFichier = tmp[tmp.length-1];
+				nomFichier = nomFichier.substring(0, nomFichier.length()-3);
+				image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier.concat("json"));
 			}
 		}
 	}
