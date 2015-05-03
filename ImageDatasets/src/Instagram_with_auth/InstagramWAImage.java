@@ -1,20 +1,60 @@
 package Instagram_with_auth;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class InstagramWAImage {
 
 	private String link;
 	private String photo;
 	private List<String> hashtags;
+	private JSONObject objson;
 
-	public InstagramWAImage(String link, String photo, List<String> hashtags) {
+	public InstagramWAImage(String link, String photo, List<String> hashtags){
 		this.link = link;
 		this.photo = photo;
 		this.hashtags = hashtags;
-
+		this.objson = null;
 	}
-
+	
+	public JSONObject generateJSON() throws JSONException {
+		objson = new JSONObject();
+		objson.put("link", link);
+		objson.put("photo", photo);
+		objson.put("hashtags", hashtags);
+		return objson;
+	}
+	
+	public void saveJSON(String filename){
+		try {
+			generateJSON();
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		FileWriter file = null;
+        try {
+        	file = new FileWriter(filename);
+            file.write(objson.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+            System.out.println("\nJSON Object: " + objson);
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+ 
+        } finally {
+            try {
+				file.flush();
+				file.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+	}
+	
 	public String getLink() {
 		return link;
 	}

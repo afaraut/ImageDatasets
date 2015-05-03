@@ -5,17 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-
+import java.util.List;
 import javax.imageio.ImageIO;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
-import Instagram_with_auth.InstagramWAImage;
 import Utils.GlobalesConstantes;
 
 public class InstagramSearch {
@@ -78,7 +74,7 @@ public class InstagramSearch {
 		return list;
 	}
 
-	public void getInstagramImages() throws IOException, JSONException {
+	public List<InstagramImage> getInstagramImages() throws IOException, JSONException {
 		ArrayList<InstagramImage> list = getInstagramRessources();
 		
 	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
@@ -88,9 +84,15 @@ public class InstagramSearch {
 		for (InstagramImage tw : list){
 				URL url = new URL(tw.getPhoto());
 				BufferedImage image = ImageIO.read(url);
-				String nomFichier = tw.getPhoto().split("/")[6];
-				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier));
+				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + tw.getFileName().concat("jpg")));
 			
+		}
+		return list;
+	}
+
+	public void saveJSON(List<InstagramImage> list) {
+		for (InstagramImage image : list){
+			image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + image.getFileName().concat("json"));
 		}
 	}
 }

@@ -1,19 +1,60 @@
 package Twitter;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TwitterImage {
 
 	private String link;
 	private List<String> hashtags;
 	private List<String> photos;
+	private JSONObject objson;
 
 	public TwitterImage(String link, List<String> hashtags, List<String> photos) {
 		this.link = link;
 		this.hashtags = hashtags;
 		this.photos = photos;
+		this.objson = null;
 	}
 
+	public JSONObject generateJSON() throws JSONException {
+		objson = new JSONObject();
+		objson.put("link", link);
+		objson.put("photos", photos);
+		objson.put("hashtags", hashtags);
+		return objson;
+	}
+	
+	public void saveJSON(String filename){
+		try {
+			generateJSON();
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		FileWriter file = null;
+        try {
+        	file = new FileWriter(filename);
+            file.write(objson.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+            System.out.println("\nJSON Object: " + objson);
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+ 
+        } finally {
+            try {
+				file.flush();
+				file.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+	}
+	
 	public String getLink() {
 		return link;
 	}
