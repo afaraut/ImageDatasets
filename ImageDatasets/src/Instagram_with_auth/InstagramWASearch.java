@@ -8,7 +8,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.imageio.ImageIO;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +20,7 @@ import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
+
 import Utils.GlobalesConstantes;
 import Utils.InstagramApi;
 
@@ -63,9 +66,9 @@ public class InstagramWASearch {
 		System.out.println("Results...");
 		JSONObject result = new JSONObject(response.getBody());
 		JSONArray tweets = result.getJSONArray("data");
-		int nombreDeTweet = tweets.length();
+		int nombreDeMessage = tweets.length();
 
-		for (int i = 0; i < nombreDeTweet; i++) {
+		for (int i = 0; i < nombreDeMessage; i++) {
 			ArrayList<String> hashtags = new ArrayList<String>();
 			JSONObject tweet = (JSONObject) tweets.opt(i);
 
@@ -77,7 +80,7 @@ public class InstagramWASearch {
 			for (int j=0; j<nombreDeHashTag; j++){
 				hashtags.add(json_hashtags.optString(j));
 			}
-
+			System.out.println("Get the pictures from Instagram... [" + new Integer(i+1) + "/" + nombreDeMessage + "]");
 			String url_image = tweet.getJSONObject("images").getJSONObject("standard_resolution").optString("url");
 			list.add(new InstagramWAImage(tweet.optString("link"), url_image, hashtags));
 		}

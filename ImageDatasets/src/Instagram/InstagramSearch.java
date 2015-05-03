@@ -7,11 +7,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.imageio.ImageIO;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
 import Utils.GlobalesConstantes;
 
 public class InstagramSearch {
@@ -51,9 +54,9 @@ public class InstagramSearch {
 
 		JSONObject result = new JSONObject(new JSONTokener(inputStream));
 		JSONArray tweets = result.getJSONArray("data");
-		int nombreDeTweet = tweets.length();
+		int nombreDeMessage = tweets.length();
 
-		for (int i = 0; i < nombreDeTweet; i++) {
+		for (int i = 0; i < nombreDeMessage; i++) {
 			
 			ArrayList<String> hashtags = new ArrayList<String>();
 			JSONObject tweet = (JSONObject) tweets.opt(i);
@@ -66,7 +69,7 @@ public class InstagramSearch {
 			for (int j=0; j<nombreDeHashTag; j++){
 				hashtags.add(json_hashtags.optString(j));
 			}
-
+			System.out.println("Get the pictures from Instagram... [" + new Integer(i+1) + "/" + nombreDeMessage + "]");
 			String url_image = tweet.getJSONObject("images").getJSONObject("standard_resolution").optString("url");
 			list.add(new InstagramImage(tweet.optString("link"), url_image, hashtags));
 		}

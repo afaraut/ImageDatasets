@@ -1,36 +1,65 @@
 package Flickr;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FlickrImage {
 
-	private String id;
-	private String description;
 	private String link;
-	private String server;
-	private String originalsecret;
-	private String originalformat;
-	private String secret;
-	private String candownload;
-	private int farm; 
+	private String filename;
+	private String description;
+	private String photo;
 	private List<String> hashtags;
-
-	public FlickrImage(String id, String description, String link, String server, String secret,
-			String originalsecret, String originalformat, String candownload, int farm, List<String> hashtags) {
-		this.id = id;
-		this.description = description;
+	private JSONObject objson;
+	
+	public FlickrImage(String link, String photo, String description, List<String> hashtags) {
 		this.link = link;
-		this.server = server;
-		this.secret = secret;
-		this.originalsecret = originalsecret;
-		this.originalformat = originalformat;
-		this.candownload = candownload;
-		this.farm = farm;
+		this.description = description;
+		this.photo = photo;
+		String tmp[] = photo.split("/");
+		String tmp_str = tmp[tmp.length-1];
+		this.filename = tmp_str.substring(0, tmp_str.length()-3);
 		this.hashtags = hashtags;
+		this.objson = null;
 	}
 
-	public String getId() {
-		return id;
+	public JSONObject generateJSON() throws JSONException {
+		objson = new JSONObject();
+		objson.put("link", link);
+		objson.put("description", description);
+		objson.put("photo", photo);
+		objson.put("hashtags", hashtags);
+		return objson;
+	}
+	
+	public void saveJSON(String filename){
+		try {
+			generateJSON();
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		FileWriter file = null;
+        try {
+        	file = new FileWriter(filename);
+            file.write(objson.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+            System.out.println("\nJSON Object: " + objson);
+ 
+        } catch (IOException e) {
+            e.printStackTrace();
+ 
+        } finally {
+            try {
+				file.flush();
+				file.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
 	}
 	
 	public String getDescription() {
@@ -40,33 +69,17 @@ public class FlickrImage {
 	public String getLink() {
 		return link;
 	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public String getOriginalsecret() {
-		return originalsecret;
-	}
-
-	public String getOriginalformat() {
-		return originalformat;
-	}
-
-	public String getSecret() {
-		return secret;
-	}
-
-	public String getCandownload() {
-		return candownload;
-	}
-	
-	public int getFarm() {
-		return farm;
-	}
 	
 	public List<String> getHashtags() {
 		return hashtags;
+	}
+	
+	public String getPhoto() {
+		return photo;
+	}
+
+	public String getFileName(){
+		return filename;
 	}
 
 	public String toString() {
@@ -79,7 +92,7 @@ public class FlickrImage {
 			tmp = tmp.substring(0, tmp.length()-2);
 		}
 		tmp = tmp.concat("]\n");
-		return tmp + id + " - " + server + " - " + secret;
+		return tmp;
 	}
 
 }

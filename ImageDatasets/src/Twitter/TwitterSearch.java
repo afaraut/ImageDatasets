@@ -22,7 +22,6 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import Instagram_with_auth.InstagramWAImage;
 import Utils.GlobalesConstantes;
 
 public class TwitterSearch {
@@ -98,10 +97,8 @@ public class TwitterSearch {
 			for (int j=0; j<nombreDeMedia; j++){
 				JSONObject jsonPhoto = (JSONObject) medias.opt(j);
 				photos.add(jsonPhoto.optString("media_url"));
+				list.add(new TwitterImage(expanded_url, hashtags, jsonPhoto.optString("media_url")));
 			}
-			
-			list.add(new TwitterImage(expanded_url, hashtags, photos));
-
 		}
 		return list;
 	}
@@ -112,7 +109,7 @@ public class TwitterSearch {
 			// Créer le dossier avec tous ses parents
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	     }
-		
+		/*
 		for (TwitterImage tw : list) {
 			for (String s : tw.getPhotos()) {
 				URL url = new URL(s);
@@ -121,18 +118,29 @@ public class TwitterSearch {
 				String nomFichier = tmp[tmp.length-1];
 				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier));
 			}
+		}*/
+		
+		for (TwitterImage tw : list){
+			URL url = new URL(tw.getPhoto());
+			BufferedImage image = ImageIO.read(url);
+			ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + tw.getFileName().concat("jpg")));
+		
 		}
+		
 		return list;
 	}
 	
 	public void saveJSON(List<TwitterImage> list) {
-		for (TwitterImage image : list){
+		/*for (TwitterImage image : list){
 			for (String s : image.getPhotos()) {
 				String tmp[] = s.split("/");
 				String nomFichier = tmp[tmp.length-1];
 				nomFichier = nomFichier.substring(0, nomFichier.length()-3);
 				image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier.concat("json"));
 			}
+		}*/
+		for (TwitterImage image : list){
+			image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + image.getFileName().concat("json"));
 		}
 	}
 }

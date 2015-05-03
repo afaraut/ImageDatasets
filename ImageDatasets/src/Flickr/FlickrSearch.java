@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -65,7 +66,7 @@ public class FlickrSearch {
 
 			result = new JSONObject(new JSONTokener(inputStream));
 			JSONObject jsonPInfos = result.getJSONObject("query").getJSONObject("results").getJSONObject("photo");
-			
+			System.out.println(result);
 			if (!jsonPInfos.isNull("tags")) {
 				JSONArray tags = jsonPInfos.getJSONObject("tags").getJSONArray("tag");
 				for (int j = 0; j < tags.length(); j++) {
@@ -75,21 +76,28 @@ public class FlickrSearch {
 			}
 			
 			String link = jsonPInfos.getJSONObject("urls").getJSONObject("url").optString("content");
-			
+			System.out.println("Get the pictures from Flickr... [" + new Integer(i+1) + "/" + count + "]");
 			// ------------------------------------
-			FlickrImage flickrImage = new FlickrImage(id, jsonPInfos.optString("description"), link,
-					jsonPhoto.optString("server"),
-					jsonPhoto.optString("secret"),
-					jsonPInfos.optString("originalsecret"),
-					jsonPInfos.optString("originalformat"), jsonPInfos
-							.getJSONObject("usage").optString("candownload"), jsonPInfos.optInt("farm"), hashtags);
-			list.add(flickrImage);
+			
+			int farm = jsonPInfos.optInt("farm");
+			String server = jsonPhoto.optString("server");
+			String secret = jsonPInfos.optString("secret");
+			String originalsecret = jsonPInfos.optString("originalsecret");
+			String originalformat = jsonPInfos.optString("originalformat");
+			
+			String photo = "";
+			if (jsonPInfos.getJSONObject("usage").optString("candownload").equals("1"))
+				photo = "https://farm"+farm+".staticflickr.com/"+ server + "/" + id + "_"+ originalsecret + "_o."+ originalformat;
+			else 
+				photo = "https://farm"+farm+".staticflickr.com/"+ server + "/" + id + "_"+ secret + "_b.jpg";
+			
+			list.add(new FlickrImage(link, photo, jsonPInfos.optString("description"), hashtags));
 		}
 		inputStream.close();
 		return list;
 	}
 
-	public void getFlickrImages() throws IOException, JSONException {
+	public List<FlickrImage> getFlickrImages() throws IOException, JSONException {
 		ArrayList<FlickrImage> list = getFlickrRessources();
 		
 	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
@@ -97,19 +105,17 @@ public class FlickrSearch {
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	     }
 		
-		for (FlickrImage fi : list) {
-			if (fi.getCandownload().equals("1")) {
-				URL url = new URL("https://farm"+fi.getFarm()+".staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getOriginalsecret() + "_o."+ fi.getOriginalformat());
-				BufferedImage image = ImageIO.read(url);
-				if (image != null)
-					ImageIO.write(image,"jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + "."+ fi.getOriginalformat()));
-			} else {
-				URL url = new URL("https://farm"+fi.getFarm()+".staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getSecret() + "_b.jpg");
-				//System.out.println(url);
-				BufferedImage image = ImageIO.read(url);
-				if (image != null)
-					ImageIO.write(image, "jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + ".jpg"));
-			}
+		for (FlickrImage tw : list){
+			URL url = new URL(tw.getPhoto());
+			BufferedImage image = ImageIO.read(url);
+			ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + tw.getFileName().concat("jpg")));
+		}
+	    return list;
+	}
+	
+	public void saveJSON(List<FlickrImage> list) {
+		for (FlickrImage image : list){
+			image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + image.getFileName().concat("json"));
 		}
 	}
 }

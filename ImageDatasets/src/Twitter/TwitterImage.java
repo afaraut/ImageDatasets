@@ -10,21 +10,25 @@ import org.json.JSONObject;
 public class TwitterImage {
 
 	private String link;
+	private String filename;
+	private String photo;
 	private List<String> hashtags;
-	private List<String> photos;
 	private JSONObject objson;
 
-	public TwitterImage(String link, List<String> hashtags, List<String> photos) {
+	public TwitterImage(String link, List<String> hashtags, String photo) {
 		this.link = link;
+		this.photo = photo;
+		String tmp[] = photo.split("/");
+		String tmp_str = tmp[tmp.length-1];
+		this.filename = tmp_str.substring(0, tmp_str.length()-3);
 		this.hashtags = hashtags;
-		this.photos = photos;
 		this.objson = null;
 	}
 
 	public JSONObject generateJSON() throws JSONException {
 		objson = new JSONObject();
 		objson.put("link", link);
-		objson.put("photos", photos);
+		objson.put("photo", photo);
 		objson.put("hashtags", hashtags);
 		return objson;
 	}
@@ -63,10 +67,13 @@ public class TwitterImage {
 		return hashtags;
 	}
 
-	public List<String> getPhotos() {
-		return photos;
+	public String getPhoto() {
+		return photo;
 	}
-
+	
+	public String getFileName(){
+		return filename;
+	}
 
 	public String toString() {
 		String tmp = link + "\n";
@@ -78,12 +85,7 @@ public class TwitterImage {
 			tmp = tmp.substring(0, tmp.length()-2);
 		}
 		tmp = tmp.concat("]\n");
-		tmp = tmp.concat("[");
-		for (String s : photos)
-			tmp = tmp.concat(s + ", ");
-		tmp = tmp.substring(0, tmp.length()-2);
-		tmp = tmp.concat("]\n");
-		
+		tmp = tmp.concat("photo : " + photo);
 		return tmp;
 	}
 
