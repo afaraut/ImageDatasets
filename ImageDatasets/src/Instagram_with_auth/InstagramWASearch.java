@@ -7,7 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -22,32 +21,32 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import Utils.GlobalesConstantes;
+import Utils.InstagramApi;
 
-public class InstagramSearch {
+public class InstagramWASearch {
 
 	private String repertoire;
 	private String text;
 	private Double latitude;
 	private Double longitude;
 	
-	public InstagramSearch (String repertoire, String text){
+	public InstagramWASearch (String repertoire, String text){
 		this.repertoire = repertoire;
 		this.text = text;
 		this.latitude = null;
 		this.longitude = null;
 	}
 	
-	public InstagramSearch (String repertoire, Double latitude, Double longitude){
+	public InstagramWASearch (String repertoire, Double latitude, Double longitude){
 		this.repertoire = repertoire;
 		this.text = null;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		System.out.println("ici");
 	}
 	
-	private ArrayList<InstagramImage> getTwitterRessources() throws JSONException, URISyntaxException {
+	private ArrayList<InstagramWAImage> getInstagramWARessources() throws JSONException, URISyntaxException {
 		
-		ArrayList<InstagramImage> list = new ArrayList<InstagramImage>();
+		ArrayList<InstagramWAImage> list = new ArrayList<InstagramWAImage>();
 
 		
 		String tmp_requete = "";
@@ -63,8 +62,8 @@ public class InstagramSearch {
 
 		String requete = uri.toASCIIString();
 		System.out.println(requete);
-		OAuthService service = new ServiceBuilder().provider(InstagramApi.class).apiKey(InstagramConstantes.APIKEY).apiSecret(InstagramConstantes.APIKEYSECRET).build();
-		Token accessToken = new Token(InstagramConstantes.TOKEN, InstagramConstantes.TOKENSECRET);
+		OAuthService service = new ServiceBuilder().provider(InstagramApi.class).apiKey(InstagramWAConstantes.APIKEY).apiSecret(InstagramWAConstantes.APIKEYSECRET).build();
+		Token accessToken = new Token(InstagramWAConstantes.TOKEN, InstagramWAConstantes.TOKENSECRET);
 
 		// https://api.instagram.com/v1/tags/beaulieusurmer/media/recent
 				
@@ -94,21 +93,18 @@ public class InstagramSearch {
 			}
 
 			String url_image = tweet.getJSONObject("images").getJSONObject("standard_resolution").optString("url");
-			list.add(new InstagramImage(tweet.optString("link"), url_image, hashtags));
+			list.add(new InstagramWAImage(tweet.optString("link"), url_image, hashtags));
 		}
 		return list;
 	}
 
-	public void getTwitterImages() throws IOException, JSONException, URISyntaxException {
-		ArrayList<InstagramImage> list = getTwitterRessources();
-		for (InstagramImage s : list) {
-			System.out.println(s);
-		}
+	public void getInstagramWAImages() throws IOException, JSONException, URISyntaxException {
+		ArrayList<InstagramWAImage> list = getInstagramWARessources();
 	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			// Créer le dossier avec tous ses parents
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	     }
-		for (InstagramImage tw : list){
+		for (InstagramWAImage tw : list){
 				URL url = new URL(tw.getPhoto());
 				BufferedImage image = ImageIO.read(url);
 				String nomFichier = tw.getPhoto().split("/")[6];

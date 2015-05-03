@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import Instagram_with_auth.InstagramWAImage;
 import Utils.GlobalesConstantes;
 
 public class InstagramSearch {
@@ -24,92 +25,72 @@ public class InstagramSearch {
 	private Double latitude;
 	private Double longitude;
 	
-	public InstagramSearch (String repertoire, String text, Double latitude, Double longitude){
+	public InstagramSearch (String repertoire, String text){
 		this.repertoire = repertoire;
 		this.text = text;
+		this.latitude = null;
+		this.longitude = null;
+	}
+	
+	public InstagramSearch (String repertoire, Double latitude, Double longitude){
+		this.repertoire = repertoire;
+		this.text = null;
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
 	
-	private ArrayList<InstagramImage> getFlickrRessources()	throws IOException, JSONException {
+	private ArrayList<InstagramImage> getInstagramRessources()	throws IOException, JSONException {
 		ArrayList<InstagramImage> list = new ArrayList<InstagramImage>();
-		String baseUrl = "https://query.yahooapis.com/v1/public/yql?q=";
-		String query = "select * from flickr.photos.search where has_geo='true' and api_key="+ InstagramConstantes.APIKEY;
-				
-		if (text != null) 
-			query = query.concat(" and text='" + text + "'");
-		if (latitude != null)
-			query = query.concat(" and lat='" + latitude + "'");
-		if (longitude != null)
-			query = query.concat(" and lon='" + longitude + "'");
+		String baseUrl = "https://api.instagram.com/v1/";
+		String query = "";// "select * from flickr.photos.search where has_geo='true' and api_key="+ InstagramConstantes.CLIENTID;
 		
-		query = query.concat(";");	
-		String fullUrlStr = baseUrl + URLEncoder.encode(query, "UTF-8")	+ "&format=json";
-		URL fullUrl = new URL(fullUrlStr);
+		if (text != null) 
+			query = query.concat("tags/" + text + "/media/recent?client_id=" + InstagramConstantes.CLIENTID);
+		
+		if (latitude != null && longitude != null)
+			query = query.concat("/media/search?client_id=" + InstagramConstantes.CLIENTID + "&lat="+latitude+"&lng="+longitude+"&distance=200");
+
+		URL fullUrl = new URL(baseUrl + query);
 		InputStream inputStream = fullUrl.openStream();
 
 		JSONObject result = new JSONObject(new JSONTokener(inputStream));
-		int count = result.getJSONObject("query").optInt("count");
+		JSONArray tweets = result.getJSONArray("data");
+		int nombreDeTweet = tweets.length();
 
-		JSONArray jsonPhotos = result.getJSONObject("query").getJSONObject("results").getJSONArray("photo");
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < nombreDeTweet; i++) {
+			
 			ArrayList<String> hashtags = new ArrayList<String>();
-			JSONObject jsonPhoto = (JSONObject) jsonPhotos.opt(i);
-			String id = jsonPhoto.optString("id");
-			// ------------------------------------
-			query = "select * from flickr.photos.info where photo_id='" + id + "' and api_key=" + InstagramConstantes.APIKEY + ";";
-			
-			fullUrlStr = baseUrl + URLEncoder.encode(query, "UTF-8")+ "&format=json";
-			fullUrl = new URL(fullUrlStr);
-			inputStream = fullUrl.openStream();
+			JSONObject tweet = (JSONObject) tweets.opt(i);
 
-			result = new JSONObject(new JSONTokener(inputStream));
-			JSONObject jsonPInfos = result.getJSONObject("query").getJSONObject("results").getJSONObject("photo");
+			// --- Get all the hashtags
+			//
+			JSONArray json_hashtags = tweet.getJSONArray("tags");			
+			int nombreDeHashTag = json_hashtags.length();
 			
-			if (!jsonPInfos.isNull("tags")) {
-				JSONArray tags = jsonPInfos.getJSONObject("tags").getJSONArray("tag");
-				for (int j = 0; j < tags.length(); j++) {
-					JSONObject tag = tags.getJSONObject(j);
-					hashtags.add(tag.optString("raw"));
-				}
+			for (int j=0; j<nombreDeHashTag; j++){
+				hashtags.add(json_hashtags.optString(j));
 			}
-			
-			String link = jsonPInfos.getJSONObject("urls").getJSONObject("url").optString("content");
-			
-			// ------------------------------------
-			InstagramImage flickrImage = new InstagramImage(id, jsonPInfos.optString("description"), link,
-					jsonPhoto.optString("server"),
-					jsonPhoto.optString("secret"),
-					jsonPInfos.optString("originalsecret"),
-					jsonPInfos.optString("originalformat"), jsonPInfos
-							.getJSONObject("usage").optString("candownload"), jsonPInfos.optInt("farm"), hashtags);
-			list.add(flickrImage);
+
+			String url_image = tweet.getJSONObject("images").getJSONObject("standard_resolution").optString("url");
+			list.add(new InstagramImage(tweet.optString("link"), url_image, hashtags));
 		}
 		inputStream.close();
 		return list;
 	}
 
-	public void getFlickrImages() throws IOException, JSONException {
-		ArrayList<InstagramImage> list = getFlickrRessources();
+	public void getInstagramImages() throws IOException, JSONException {
+		ArrayList<InstagramImage> list = getInstagramRessources();
 		
-	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
+	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			// Créer le dossier avec tous ses parents
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	     }
-		
-		for (InstagramImage fi : list) {
-			if (fi.getCandownload().equals("1")) {
-				URL url = new URL("https://farm"+fi.getFarm()+".staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getOriginalsecret() + "_o."+ fi.getOriginalformat());
+		for (InstagramImage tw : list){
+				URL url = new URL(tw.getPhoto());
 				BufferedImage image = ImageIO.read(url);
-				if (image != null)
-					ImageIO.write(image,"jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + "."+ fi.getOriginalformat()));
-			} else {
-				URL url = new URL("https://farm"+fi.getFarm()+".staticflickr.com/"+ fi.getServer() + "/" + fi.getId() + "_"+ fi.getSecret() + "_b.jpg");
-				//System.out.println(url);
-				BufferedImage image = ImageIO.read(url);
-				if (image != null)
-					ImageIO.write(image, "jpg",new File(GlobalesConstantes.REPERTOIRE + repertoire + fi.getId() + ".jpg"));
-			}
+				String nomFichier = tw.getPhoto().split("/")[6];
+				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier));
+			
 		}
 	}
 }

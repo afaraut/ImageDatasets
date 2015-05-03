@@ -1,5 +1,6 @@
 import Flickr.FlickrSearch;
-import Instagram_with_auth.InstagramSearch;
+import Instagram.InstagramSearch;
+import Instagram_with_auth.InstagramWASearch;
 import Twitter.TwitterSearch;
 
 
@@ -8,9 +9,13 @@ public class Main {
 		/*FlickrSearch flickr = new FlickrSearch("flickr\\", "mer", 43.7077201, 7.3343701);
 		flickr.getFlickrImages();
 		TwitterSearch twitter = new TwitterSearch("twitter\\", "mer", 43.50594428, 7.04675669);
-		twitter.getTwitterImages();*/
-		InstagramSearch instagram = new InstagramSearch("instagram\\", 43.50594428, 7.04675669);
+		twitter.getTwitterImages();
+		InstagramWASearch instagram = new InstagramWASearch("instagram\\", 43.50594428, 7.04675669);
 		//InstagramSearch instagram = new InstagramSearch("instagram\\", "mer");
-		instagram.getTwitterImages();
+		instagram.getTwitterImages();*/
+		
+		//InstagramSearch instagram = new InstagramSearch("instagram\\", 43.50594428, 7.04675669);
+		InstagramSearch instagram = new InstagramSearch("instagram\\", "mer");
+		instagram.getInstagramImages();
 	}
 }

@@ -2,13 +2,13 @@ package Instagram_with_auth;
 
 import java.util.List;
 
-public class InstagramImage {
+public class InstagramWAImage {
 
 	private String link;
 	private String photo;
 	private List<String> hashtags;
 
-	public InstagramImage(String link, String photo, List<String> hashtags) {
+	public InstagramWAImage(String link, String photo, List<String> hashtags) {
 		this.link = link;
 		this.photo = photo;
 		this.hashtags = hashtags;

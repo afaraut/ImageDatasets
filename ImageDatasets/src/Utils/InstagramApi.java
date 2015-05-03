@@ -1,4 +1,4 @@
-package Instagram_with_auth;
+package Utils;
 
 import org.scribe.builder.api.DefaultApi20;
 import org.scribe.extractors.AccessTokenExtractor;
