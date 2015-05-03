@@ -1,4 +1,5 @@
 FlickrConstantes.java
 TwitterConstantes.java
+InstagramConstantes.java
 *.class
 ./Flickr/bin/*
