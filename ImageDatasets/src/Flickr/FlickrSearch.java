@@ -66,7 +66,6 @@ public class FlickrSearch {
 
 			result = new JSONObject(new JSONTokener(inputStream));
 			JSONObject jsonPInfos = result.getJSONObject("query").getJSONObject("results").getJSONObject("photo");
-			System.out.println(result);
 			if (!jsonPInfos.isNull("tags")) {
 				JSONArray tags = jsonPInfos.getJSONObject("tags").getJSONArray("tag");
 				for (int j = 0; j < tags.length(); j++) {

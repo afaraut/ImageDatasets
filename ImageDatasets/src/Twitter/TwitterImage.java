@@ -43,9 +43,6 @@ public class TwitterImage {
         try {
         	file = new FileWriter(filename);
             file.write(objson.toString());
-            System.out.println("Successfully Copied JSON Object to File...");
-            System.out.println("\nJSON Object: " + objson);
- 
         } catch (IOException e) {
             e.printStackTrace();
  
