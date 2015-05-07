@@ -23,6 +23,7 @@ public class InstagramSearch {
 	private String text;
 	private Double latitude;
 	private Double longitude;
+	private Integer distance;
 	
 	public InstagramSearch (String repertoire, String text){
 		this.repertoire = repertoire;
@@ -31,11 +32,12 @@ public class InstagramSearch {
 		this.longitude = null;
 	}
 	
-	public InstagramSearch (String repertoire, Double latitude, Double longitude){
+	public InstagramSearch (String repertoire, Double latitude, Double longitude, Integer distance){
 		this.repertoire = repertoire;
 		this.text = null;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.distance = distance; // La distance est en mètre
 	}
 	
 	private ArrayList<InstagramImage> getInstagramRessources()	throws IOException, JSONException {
@@ -47,7 +49,7 @@ public class InstagramSearch {
 			query = query.concat("tags/" + text + "/media/recent?client_id=" + InstagramConstantes.CLIENTID);
 		
 		if (latitude != null && longitude != null)
-			query = query.concat("/media/search?client_id=" + InstagramConstantes.CLIENTID + "&lat="+latitude+"&lng="+longitude+"&distance=200");
+			query = query.concat("/media/search?client_id=" + InstagramConstantes.CLIENTID + "&lat="+latitude+"&lng="+longitude+"&distance=" + distance);
 
 		URL fullUrl = new URL(baseUrl + query);
 		InputStream inputStream = fullUrl.openStream();
@@ -85,10 +87,9 @@ public class InstagramSearch {
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	     }
 		for (InstagramImage tw : list){
-				URL url = new URL(tw.getPhoto());
-				BufferedImage image = ImageIO.read(url);
-				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + tw.getFileName().concat("jpg")));
-			
+			URL url = new URL(tw.getPhoto());
+			BufferedImage image = ImageIO.read(url);
+			ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + tw.getFileName().concat("jpg")));
 		}
 		return list;
 	}

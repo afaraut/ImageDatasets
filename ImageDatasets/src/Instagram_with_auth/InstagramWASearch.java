@@ -30,6 +30,7 @@ public class InstagramWASearch {
 	private String text;
 	private Double latitude;
 	private Double longitude;
+	private Integer distance;
 	
 	public InstagramWASearch (String repertoire, String text){
 		this.repertoire = repertoire;
@@ -38,11 +39,12 @@ public class InstagramWASearch {
 		this.longitude = null;
 	}
 	
-	public InstagramWASearch (String repertoire, Double latitude, Double longitude){
+	public InstagramWASearch (String repertoire, Double latitude, Double longitude, Integer distance){
 		this.repertoire = repertoire;
 		this.text = null;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.distance = distance; // La distance est en mètre
 	}
 	
 	private ArrayList<InstagramWAImage> getInstagramWARessources() throws JSONException, URISyntaxException {
@@ -53,7 +55,7 @@ public class InstagramWASearch {
 			uri = new URI("https", "api.instagram.com", "/v1/tags/" + text + "/media/recent" , null);
 		
 		if (latitude != null && longitude != null) 
-			uri = new URI("https", "api.instagram.com", "/v1/media/search", "lat=" + latitude + "&lng=" + longitude + "&distance=" + "200", null);
+			uri = new URI("https", "api.instagram.com", "/v1/media/search", "lat=" + latitude + "&lng=" + longitude + "&distance=" + distance, null);
 		
 		String requete = uri.toASCIIString();
 		System.out.println(requete);
