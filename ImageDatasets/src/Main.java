@@ -14,36 +14,47 @@ import Twitter.TwitterSearch;
 public class Main {
 	public static void main(String args[]) throws Exception {
 		
-		// 45.801744, 5.015998 paumé
-		// 40.757982, -73.985549 Time square
-		
-		FlickrSearch flickr = new FlickrSearch("flickr\\", "Time Square",  40.757982, -73.985549, 0.5);
+	//  Latitude	Longitude
+	//	Endroit paumé	45.801744	5.015998
+	//	Campus de la Doua	45.782510	4.871976
+	//  Place Bellecour	45.757753	4.832005
+	//	Time Square NY	40.757982	-73.985549
+					
+//		FlickrSearch flickr = new FlickrSearch("flickr\\",  "Time Square");
+//		FlickrSearch flickr = new FlickrSearch("flickr\\", 40.757982, -73.985549, 0.5);	
+//		FlickrSearch flickr = new FlickrSearch("flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);	
 		
 		// In order to save all the pictures and json at each loop (more safe)
 		//
-		flickr.getFlickrRessourcesWithSave();
+//		flickr.getFlickrRessources();
 		
 		// In order to know the number of picture(s) for the request
 		//
-		//flickr.printFlickrNumberResult();
+//		flickr.printFlickrNumberResult();
 		
-		// In order to save all the pictures and json at the end (deprecated)
+//		TwitterSearch twitter = new TwitterSearch("twitter\\", "Time Square");
+//		TwitterSearch twitter = new TwitterSearch("twitter\\", 40.757982, -73.985549, 0.5);	
+//		TwitterSearch twitter = new TwitterSearch("twitter\\",  "Time Square", 40.757982, -73.985549, 0.5);	
+		
+		// In order to save all the pictures and json at each loop (more safe)
 		//
-		//flickr.saveJSONList(flickr.saveFlickrImages());
+//		twitter.getTwitterRessources();
+
+		// In order to know the number of picture(s) for the request
+		//
+//		twitter.printTwitterNumberResult();
 		
+			
+//		InstagramSearch instagram = new InstagramSearch("instagram\\", 40.757982, -73.985549, 500);
+//		InstagramSearch instagram = new InstagramSearch("instagram\\", "beaulieusurmer");
+				
+		// In order to save all the pictures and json at each loop (more safe)
+		//
+//		instagram.getInstagramRessources();
+
+		// In order to know the number of picture(s) for the request
+		//
+//		instagram.printInstagramNumberResult();
 		
-		/*FlickrYqlSearch flickryql = new FlickrYqlSearch("flickrYql\\", "light nyc", 40.757982, -73.985549, 0.5);
-		flickryql.saveJSON(flickryql.getFlickrImages());*/
-		
-		/*TwitterSearch twitter = new TwitterSearch("twitter\\", "mer", 45.801744, 5.015998);
-		twitter.saveJSON(twitter.getTwitterImages());
-		
-		InstagramWASearch instagramwa = new InstagramWASearch("instagram_wa\\", 45.801744, 5.015998, 500);
-		//InstagramSearch instagramwa = new InstagramSearch("instagram\\", "mer");
-		instagramwa.saveJSON(instagramwa.getInstagramWAImages());*/
-		
-		//InstagramSearch instagram = new InstagramSearch("instagram\\", 43.50594428, 7.04675669, 500);
-		//InstagramSearch instagram = new InstagramSearch("instagram\\", "mer");
-		//instagram.saveJSON(instagram.getInstagramImages());
 	}
 }

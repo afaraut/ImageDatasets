@@ -7,7 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -30,26 +29,46 @@ public class TwitterSearch {
 	private String text;
 	private Double latitude;
 	private Double longitude;
+	private Double distance;
 	
-	public TwitterSearch (String repertoire, String text, Double latitude, Double longitude){
+	public TwitterSearch (String repertoire, String text){
+		this.repertoire = repertoire;
+		this.text = text;
+		this.latitude = null;
+		this.longitude = null;
+		this.distance = null;
+	}
+	
+	public TwitterSearch (String repertoire, Double latitude, Double longitude, Double distance){
+		this.repertoire = repertoire;
+		this.text = null;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.distance = distance;
+	}
+	
+	public TwitterSearch (String repertoire, String text, Double latitude, Double longitude, Double distance){
 		this.repertoire = repertoire;
 		this.text = text;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.distance = distance;
 	}
 	
-	private ArrayList<TwitterImage> getTwitterRessources() throws JSONException, URISyntaxException {
-		
-		ArrayList<TwitterImage> list = new ArrayList<TwitterImage>();
-
-		String tmp_requete = null;
-		if (text != null) {
+	/**
+	 * Try to get all the media from each page
+	 * @throws JSONException
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	public void getTwitterRessources () throws JSONException, URISyntaxException, IOException {
+		String tmp_requete = "";
+		if (text != null) 
 			tmp_requete = "&q=" + text;
-		}
-		if (latitude != null && longitude != null)
-			tmp_requete = tmp_requete.concat("&geocode=" + latitude + "," + longitude + "," + "400km");
+		if (latitude != null && longitude != null && distance != null)
+			tmp_requete = tmp_requete.concat("&geocode=" + latitude + "," + longitude + "," + distance + "km");
 		
-		URI uri = new URI("https", "api.twitter.com", "/1.1/search/tweets.json","filter=images&count=30&include_entities=1&exclude=retweets" + tmp_requete, null);
+		URI uri = new URI("https", "api.twitter.com", "/1.1/search/tweets.json","filter=images&count=100&include_entities=1&exclude=retweets" + tmp_requete, null);
 		String requete = uri.toASCIIString();
 		
 		OAuthService service = new ServiceBuilder().provider(TwitterApi.class).apiKey(TwitterConstantes.APIKEY).apiSecret(TwitterConstantes.APIKEYSECRET).build();
@@ -61,10 +80,99 @@ public class TwitterSearch {
 		Response response = request.send();
 		System.out.println("Results...");
 		JSONObject result = new JSONObject(response.getBody());
-		
 		JSONArray tweets = result.getJSONArray("statuses");
-		int nombreDeTweet = tweets.length();
-
+		JSONObject search_metadata = result.getJSONObject("search_metadata");
+		int nombreDePage = 0;
+		int nombreDeTweet = search_metadata.optInt("count");	
+		if (result.isNull("errors")) {
+			while (true) { // A modifier
+				for (int i = 0; i < nombreDeTweet; i++) {
+					if (!result.isNull("errors")) {
+						System.out.println("Too many requests ! You have to wait 15 minutes");
+						return;
+					}
+					ArrayList<String> hashtags = new ArrayList<String>();	
+					JSONObject tweet = (JSONObject) tweets.opt(i);
+					JSONArray json_hashtags = tweet.getJSONObject("entities").getJSONArray("hashtags");			
+					int nombreDeHashTag = json_hashtags.length();
+					
+					// --- Get all the hashtag
+					//
+					for (int k=0; k<nombreDeHashTag; k++){
+						hashtags.add(((JSONObject) json_hashtags.opt(k)).optString("text"));
+					}
+					
+					String expanded_url = ((JSONObject)(tweet.getJSONObject("entities").getJSONArray("media")).opt(0)).optString("expanded_url");
+					
+					// --- Second request in order to get all the pictures from the tweet
+					//
+					String requetee = "https://api.twitter.com/1.1/statuses/show.json?id=" + tweet.optString("id_str") ;
+					OAuthRequest requesteee = new OAuthRequest(Verb.GET, requetee);
+					service.signRequest(accessToken, requesteee);
+					response = requesteee.send();
+					System.out.println("Get the pictures from the tweet... [" + new Integer(i+1) + "/" + nombreDeTweet + "] page " + nombreDePage);
+					result = new JSONObject(response.getBody());
+					System.out.println(result);
+					if (!result.isNull("extended_entities")) {
+						JSONArray medias = result.getJSONObject("extended_entities").getJSONArray("media");
+						int nombreDeMedia = medias.length();
+						for (int j=0; j<nombreDeMedia; j++){
+							JSONObject jsonPhoto = (JSONObject) medias.opt(j);					
+							TwitterImage image = new TwitterImage(expanded_url, hashtags, jsonPhoto.optString("media_url"));
+							saveTwitterImage(image); // Download image
+							saveJSON(image); // Save json
+						}
+					}
+				}		
+				// Generate a new request in order to get all the media from each page
+				//
+				nombreDePage++;	
+				requete = "https://api.twitter.com/1.1/search/tweets.json" + search_metadata.optString("next_results") +"&count=100&include_entities=1";
+				request = new OAuthRequest(Verb.GET, requete);
+				service.signRequest(accessToken, request);
+				response = request.send();
+				result = new JSONObject(response.getBody());
+				tweets = result.getJSONArray("statuses");
+				search_metadata = result.getJSONObject("search_metadata");
+				nombreDeTweet = search_metadata.optInt("count");
+			}
+		}
+		else { // Because we cannot do all the request we want
+			System.out.println("Too many requests ! You have to wait 15 minutes");
+		}
+	}
+	
+ 	/**
+	 * Get all the media from the first page (100 pictures)
+	 * @throws JSONException
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+/*	public void getTwitterRessources() throws JSONException, URISyntaxException, IOException {
+		
+		String tmp_requete = "";
+		if (text != null) 
+			tmp_requete = "&q=" + text;
+		if (latitude != null && longitude != null && distance != null)
+			tmp_requete = tmp_requete.concat("&geocode=" + latitude + "," + longitude + "," + distance + "km");
+		
+		URI uri = new URI("https", "api.twitter.com", "/1.1/search/tweets.json","filter=images&count=100&include_entities=1&exclude=retweets" + tmp_requete, null);
+		String requete = uri.toASCIIString();
+		
+		OAuthService service = new ServiceBuilder().provider(TwitterApi.class).apiKey(TwitterConstantes.APIKEY).apiSecret(TwitterConstantes.APIKEYSECRET).build();
+		Token accessToken = new Token(TwitterConstantes.TOKEN, TwitterConstantes.TOKENSECRET);
+				
+		System.out.println("Requete...");
+		OAuthRequest request = new OAuthRequest(Verb.GET, requete);
+		service.signRequest(accessToken, request);
+		Response response = request.send();
+		System.out.println("Results...");
+		JSONObject result = new JSONObject(response.getBody());
+		System.out.println(result);
+		JSONArray tweets = result.getJSONArray("statuses");
+		JSONObject search_metadata = result.getJSONObject("search_metadata");
+		int nombreDeTweet = search_metadata.optInt("count");
+		
 		for (int i = 0; i < nombreDeTweet; i++) {
 			
 			ArrayList<String> hashtags = new ArrayList<String>();
@@ -97,50 +205,26 @@ public class TwitterSearch {
 			for (int j=0; j<nombreDeMedia; j++){
 				JSONObject jsonPhoto = (JSONObject) medias.opt(j);
 				photos.add(jsonPhoto.optString("media_url"));
-				list.add(new TwitterImage(expanded_url, hashtags, jsonPhoto.optString("media_url")));
+				TwitterImage image = new TwitterImage(expanded_url, hashtags, jsonPhoto.optString("media_url"));
+				saveTwitterImage(image); // Download image
+				saveJSON(image); // Save json
 			}
 		}
-		return list;
-	}
+	}*/
 
-	public List<TwitterImage> getTwitterImages() throws IOException, JSONException, URISyntaxException {
-		ArrayList<TwitterImage> list = getTwitterRessources();
+	public void saveTwitterImage(TwitterImage twImage) throws IOException, JSONException {
+		
 	     if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
-			// Créer le dossier avec tous ses parents
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	     }
-		/*
-		for (TwitterImage tw : list) {
-			for (String s : tw.getPhotos()) {
-				URL url = new URL(s);
-				BufferedImage image = ImageIO.read(url);				
-				String tmp[] = s.split("/");
-				String nomFichier = tmp[tmp.length-1];
-				ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier));
-			}
-		}*/
-		
-		for (TwitterImage tw : list){
-			URL url = new URL(tw.getPhoto());
-			BufferedImage image = ImageIO.read(url);
-			ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + tw.getFileName().concat("jpg")));
-		
-		}
-		
-		return list;
+
+		URL url = new URL(twImage.getPhoto());
+		BufferedImage image = ImageIO.read(url);
+		ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + twImage.getFileName().concat("jpg")));
 	}
 	
-	public void saveJSON(List<TwitterImage> list) {
-		/*for (TwitterImage image : list){
-			for (String s : image.getPhotos()) {
-				String tmp[] = s.split("/");
-				String nomFichier = tmp[tmp.length-1];
-				nomFichier = nomFichier.substring(0, nomFichier.length()-3);
-				image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + nomFichier.concat("json"));
-			}
-		}*/
-		for (TwitterImage image : list){
-			image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + image.getFileName().concat("json"));
-		}
+	public void saveJSON(TwitterImage image) {
+		image.saveJSON(GlobalesConstantes.REPERTOIRE + repertoire + image.getFileName().concat("json"));
 	}
+	
 }
