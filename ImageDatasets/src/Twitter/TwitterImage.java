@@ -18,9 +18,17 @@ public class TwitterImage {
 	public TwitterImage(String link, List<String> hashtags, String photo) {
 		this.link = link;
 		this.photo = photo;
-		String tmp[] = photo.split("/");
-		String tmp_str = tmp[tmp.length-1];
-		this.filename = tmp_str.substring(0, tmp_str.length()-3);
+		if (photo != null) {
+			String tmp[] = photo.split("/");
+			String tmp_str = tmp[tmp.length-1];
+			this.filename = tmp_str.substring(0, tmp_str.length()-3);
+		}
+		else {
+			System.out.println(link);
+			String tmp[] = link.split("/");
+			String tmp_str = tmp[tmp.length-1];
+			this.filename = tmp_str + ".";
+		}
 		this.hashtags = hashtags;
 		this.objson = null;
 	}

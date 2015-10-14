@@ -166,8 +166,14 @@ public class FlickrSearch {
 	
 	public void saveFlickrImage(FlickrImage fkImage) throws IOException, JSONException {
 		URL url = new URL(fkImage.getPhoto());
-		BufferedImage image = ImageIO.read(url);
-		ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + fkImage.getFileName().concat("jpg")));
+		try {
+			BufferedImage image = ImageIO.read(url);
+			ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + repertoire + fkImage.getFileName().concat("jpg")));
+			
+		}
+		catch (IOException e){
+			System.out.println("Failed to save photo: " + e.getMessage());
+		}
 	}
 	
 	public void saveJSON(FlickrImage image) {
