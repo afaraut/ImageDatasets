@@ -1,5 +1,6 @@
 package Twitter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -7,15 +8,46 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class TwitterImage {
+import Utils.GlobalesConstantes;
 
+public class TwitterImage {
+	
+	private String repertoire;
 	private String link;
 	private String filename;
 	private String photo;
 	private List<String> hashtags;
 	private JSONObject objson;
 
-	public TwitterImage(String link, List<String> hashtags, String photo) {
+	public TwitterImage(String repertoire, String link, List<String> hashtags){
+		
+		this.repertoire = repertoire;
+	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
+			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
+	    }
+		this.link = link;
+		this.hashtags = hashtags;
+		this.objson = null;
+		
+		String tmp[] = link.split("/");
+		this.filename = tmp[tmp.length-1] + ".";
+	}
+	
+	public void setPhoto(String photo){
+		this.photo = photo;
+		String tmp[] = photo.split("/");
+		String tmp_str = tmp[tmp.length-1];
+		this.filename = tmp_str.substring(0, tmp_str.length()-3);
+	}
+	
+	
+	/*public TwitterImage(String link, List<String> hashtags, String photo) {
+		
+		this.repertoire = repertoire;
+	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
+			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
+	    }
+		
 		this.link = link;
 		this.photo = photo;
 		if (photo != null) {
@@ -31,7 +63,7 @@ public class TwitterImage {
 		}
 		this.hashtags = hashtags;
 		this.objson = null;
-	}
+	}*/
 
 	public JSONObject generateJSON() throws JSONException {
 		objson = new JSONObject();
@@ -62,6 +94,10 @@ public class TwitterImage {
 				e.printStackTrace();
 			}
         }
+	}
+	
+	public String getDirectory() {
+		return repertoire;
 	}
 	
 	public String getLink() {
