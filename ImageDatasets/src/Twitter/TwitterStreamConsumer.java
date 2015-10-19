@@ -11,28 +11,43 @@ import org.scribe.model.*;
 public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
     private static final String STREAM_URI = "https://stream.twitter.com/1.1/statuses/filter.json";
     private String repertoire;
-    private String requete;
     private String latestTweet;
-    private int tweetCount;
+    private long tweetCount;
+	private String text;
+	private Double latitude;
+	private Double longitude;
 
-	public TwitterStreamConsumer (String repertoire, String requete){
+	public TwitterStreamConsumer (String repertoire, String text){
 		this.repertoire = repertoire;				
-		if (requete != null) {
-			this.requete = requete;
-		}
-		System.out.println(requete);
+		this.text = text;
+		this.latitude = null;
+		this.longitude = null;
 	}
-    
+		
+	public TwitterStreamConsumer (String repertoire, Double latitude, Double longitude){
+		this.repertoire = repertoire;
+		this.text = null;
+		this.latitude = latitude;
+		this.longitude = longitude;	
+	}
+		
+	public TwitterStreamConsumer (String repertoire, String text, Double latitude, Double longitude){
+		this.repertoire = repertoire;
+		this.text = text;
+		this.latitude = latitude;
+		this.longitude = longitude;	
+	}
+
     public String getLatestTweet(){
         return latestTweet;
     }
 
-    public int getTweetCount(){
+    public long getTweetCount(){
         return tweetCount;
     }
-    	
+    	    
 	public BufferedReader makePostRequest(){
-		
+				
         // Let's generate the request
         System.out.println("Connecting to Twitter Public Stream");
         OAuthRequest request = new OAuthRequest(Verb.POST, STREAM_URI);
@@ -40,9 +55,18 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
         request.addHeader("host", "stream.twitter.com");
         request.setConnectionKeepAlive(true);
         request.addHeader("user-agent", "Twitter Stream Reader");
-        request.addBodyParameter("track", requete); // Set keywords you'd like to track here
+        if (text != null) {
+            request.addBodyParameter("track", text); // Set keywords you'd like to track here
+        }
+        if (latitude != null && longitude != null ) {
+        	String geolocation = new String (latitude + ", " + longitude);
+        	geolocation = geolocation.replace('.', ',');
+        	System.out.println(geolocation);
+            request.addBodyParameter("locations", geolocation); // Set gelocation you'd like to track here
+        }
+            
         SERVICE.signRequest(ACCESSTOKEN, request);
-				
+
 		try {
 			Response response = request.send();
             // Create a reader to read Twitter's stream
