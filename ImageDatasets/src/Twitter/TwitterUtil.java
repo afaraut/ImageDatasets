@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -26,7 +27,7 @@ public abstract class TwitterUtil {
 	protected static final OAuthService SERVICE = new ServiceBuilder().provider(TwitterApi.class).apiKey(TwitterConstantes.APIKEY).apiSecret(TwitterConstantes.APIKEYSECRET).build();
 	protected static final Token ACCESSTOKEN = new Token(TwitterConstantes.TOKEN, TwitterConstantes.TOKENSECRET);
 	
-	protected JSONObject makeGetRequest(String getRequete){
+	protected JSONObject makeGetRequestJSONObject(String getRequete){
 		//System.out.println("Requete...");
 		OAuthRequest request = new OAuthRequest(Verb.GET, getRequete);
 		SERVICE.signRequest(ACCESSTOKEN, request);
@@ -35,6 +36,22 @@ public abstract class TwitterUtil {
 		try {
 			Response response = request.send();
 			return new JSONObject(response.getBody());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	protected JSONArray makeGetRequestJSONArray(String getRequete){
+		//System.out.println("Requete...");
+		OAuthRequest request = new OAuthRequest(Verb.GET, getRequete);
+		SERVICE.signRequest(ACCESSTOKEN, request);
+
+		//System.out.println("Results...");
+		try {
+			Response response = request.send();
+			return new JSONArray(response.getBody());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -61,9 +78,10 @@ public abstract class TwitterUtil {
 		return new String();
 	}
 	
-	protected void getAllMedia(JSONObject tweet, TwitterImage image) throws JSONException, IOException{
-		String requeteMedia = "https://api.twitter.com/1.1/statuses/show.json?id=" + tweet.optString("id_str") ;
-		JSONObject result = makeGetRequest(requeteMedia);
+	protected void getAllMedia(String tweetID, TwitterImage image) throws JSONException, IOException{
+
+		String requeteMedia = "https://api.twitter.com/1.1/statuses/show.json?id=" + tweetID ;
+		JSONObject result = makeGetRequestJSONObject(requeteMedia);
 		System.out.println("Get the pictures from the tweet...");
 		if (!result.isNull("extended_entities")) {
 			JSONArray medias = result.getJSONObject("extended_entities").getJSONArray("media");
@@ -77,13 +95,38 @@ public abstract class TwitterUtil {
 		}
 	}
 	
+	protected void getAllMedia(HashMap<String, TwitterImage> hashMapTweets, String idList) throws JSONException, IOException{	
+		
+		String requeteMedia = "https://api.twitter.com/1.1/statuses/lookup.json?id=" + idList;	
+		JSONArray results = makeGetRequestJSONArray(requeteMedia);
+		int numberOfResult = results.length();
+		
+		for (int i = 0; i < numberOfResult; i++) {
+			JSONObject result = (JSONObject) results.opt(i);
+			String tweetID = result.optString("id_str");
+			TwitterImage image = hashMapTweets.get(tweetID);
+			if(image == null) {continue;} // Just to be sure
+			System.out.println("Get the pictures from the tweet...");
+			if (!result.isNull("extended_entities")) {
+				JSONArray medias = result.getJSONObject("extended_entities").getJSONArray("media");
+				int nombreDeMedia = medias.length();
+				for (int j=0; j<nombreDeMedia; j++){
+					JSONObject jsonPhoto = (JSONObject) medias.opt(j);					
+					image.setPhoto(jsonPhoto.optString("media_url"));
+					saveTwitterImage(image); // Download image
+					saveJSON(image); // Save json
+				}
+			}
+		}
+	}
+	
 	protected void saveTwitterImage(TwitterImage twImage) throws IOException, JSONException {
 		URL url = new URL(twImage.getPhoto());
 		BufferedImage image = ImageIO.read(url);
-		ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName().concat("jpg")));
+		ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName().concat(".jpg")));
 	}
 	
 	protected void saveJSON(TwitterImage twImage) {	    
-		twImage.saveJSON(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName().concat("json"));
+		twImage.saveJSON(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName().concat(".json"));
 	}
 }

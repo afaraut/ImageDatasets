@@ -19,7 +19,7 @@ public class TwitterImage {
 	private List<String> hashtags;
 	private JSONObject objson;
 
-	public TwitterImage(String repertoire, String link, List<String> hashtags){
+	public TwitterImage(String repertoire, String link, String id, List<String> hashtags){
 		
 		this.repertoire = repertoire;
 	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
@@ -29,15 +29,17 @@ public class TwitterImage {
 		this.hashtags = hashtags;
 		this.objson = null;
 		
-		String tmp[] = link.split("/");
-		this.filename = tmp[tmp.length-1] + ".";
+		// Or the id by param
+		//String tmp[] = link.split("/");
+		//this.filename = tmp[tmp.length-1] + ".";
+		this.filename = id;
 	}
 	
 	public void setPhoto(String photo){
 		this.photo = photo;
 		String tmp[] = photo.split("/");
 		String tmp_str = tmp[tmp.length-1];
-		this.filename = tmp_str.substring(0, tmp_str.length()-3);
+		this.filename = this.filename.concat("_" + tmp_str.substring(0, tmp_str.length()-4));
 	}
 	
 	

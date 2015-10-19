@@ -3,6 +3,7 @@ package Twitter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,36 +61,48 @@ public class TwitterSearch extends TwitterUtil {
 	 * @throws IOException
 	 */
 	public void getTwitterRessources () throws JSONException, URISyntaxException, IOException {
-				
-		JSONObject result = makeGetRequest(requete);
-		JSONArray tweets = result.getJSONArray("statuses");		
+					
+		JSONObject result = makeGetRequestJSONObject(requete);
+		JSONArray tweets = result.getJSONArray("statuses");
 		String next_results = null;
 		if (!result.isNull("search_metadata") && !result.getJSONObject("search_metadata").isNull("next_results")) {
 			next_results = result.getJSONObject("search_metadata").optString("next_results");
 		}
 		int nombreDeTweet = tweets.length();
-		System.out.println("nombreDeTweet" + nombreDeTweet);
-				
+		System.out.println("nombreDeTweet " + nombreDeTweet);
+		HashMap<String, TwitterImage> hashMapTweets = new HashMap<String, TwitterImage>();
 		//if (result.isNull("errors")) {
 			do {
+				String idList = new String();
 				for (int i = 0; i < nombreDeTweet; i++) {
-					if (!result.isNull("errors")) { // CHECK THE ERROR CODE
+					if (!result.isNull("errors")) { // CHECK THE ERROR CODE, because it can be a new error
 						System.out.println("Too many requests ! You have to wait 15 minutes");
 						return;
 					}
 					
 					JSONObject tweet = (JSONObject) tweets.opt(i);
-					TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), getAllHashTag(tweet));
-					if (!tweet.getJSONObject("entities").isNull("media")){
-						getAllMedia(tweet, image); // Get All Pictures
+					String tweetID = tweet.optString("id_str");
+					TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), tweetID, getAllHashTag(tweet));
+					
+					if (!tweet.getJSONObject("entities").isNull("media")) { // If there is media
+						idList = idList.concat(tweetID + ",");
+						hashMapTweets.put(tweetID, image);
 					}
 					else {
 						saveJSON(image); // Save json
 					}
 				}
+				
+				int idListLength = idList.length();
+				if (idListLength > 0) { // If there is media
+					idList =  idList.substring(0, idListLength-1); // Remove the last ","
+					getAllMedia(hashMapTweets, idList);
+				}
+				
 				if (next_results != null) { // There is still tweets
-					requete = "https://api.twitter.com/1.1/search/tweets.json" + next_results +"&count=100&include_entities=1";
-					result = makeGetRequest(requete);
+					requete = "https://api.twitter.com/1.1/search/tweets.json" + next_results;
+					System.out.println("Request for a new page ... ");
+					result = makeGetRequestJSONObject(requete);
 					tweets = result.getJSONArray("statuses");					
 					nombreDeTweet = tweets.length();
 					if (!result.getJSONObject("search_metadata").isNull("next_results")){
@@ -101,7 +114,7 @@ public class TwitterSearch extends TwitterUtil {
 				}
 			} while (next_results != null);
 			System.out.println("End of the results");
-		/*}
+		/*} 
 		else { // Because we cannot do all the request we want
 			System.out.println("Too many requests ! You have to wait 15 minutes");
 		}*/
