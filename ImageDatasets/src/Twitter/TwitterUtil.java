@@ -122,6 +122,7 @@ public abstract class TwitterUtil {
 	
 	protected void saveTwitterImage(TwitterImage twImage) throws IOException, JSONException {
 		URL url = new URL(twImage.getPhoto());
+		System.out.println(url);
 		BufferedImage image = ImageIO.read(url);
 		ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName().concat(".jpg")));
 	}

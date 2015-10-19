@@ -32,17 +32,23 @@ public class Main {
 		
 // -------------------------- Twitter4j	
 		
-		//TwitterSearch4j twitter = new TwitterSearch4j("Twitter 4j\\", "\"Time Square\"");
+		//TwitterSearch4j twitter = new TwitterSearch4j("Twitter 4j\\",  "Time Square");
+		//TwitterSearch4j twitter = new TwitterSearch4j("Twitter 4j\\", 48.8539541, 2.3483307000000195);	
+		//TwitterSearch4j twitter = new TwitterSearch4j("Twitter 4j\\",  "Time Square", 40.757982, -73.985549);	
+		
 		//twitter.getTwitterRessources();
 		
 // -------------------------- Twitter Stream	
 				
-        //TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\", "Time Square, New York");
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square, Night");
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\", 48.8539541, 2.3483307000000195);	
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square", 40.757982, -73.985549);	
+		
         //new Thread(streamConsumer).start();
 		
 // -------------------------- Twitter
 		
-		//TwitterSearch twitter = new TwitterSearch("Twitter Time Square\\", "Time Square");
+		//TwitterSearch twitter = new TwitterSearch("Twitter\\", "Time Square");
 		//TwitterSearch twitter = new TwitterSearch("twitter\\", 40.757982, -73.985549, 1.5);	
 		//TwitterSearch twitter = new TwitterSearch("twitter\\",  "TimeSquare", 45.7520005, 4.8417091, 1.0);
 
