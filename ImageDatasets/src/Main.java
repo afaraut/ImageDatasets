@@ -48,11 +48,11 @@ public class Main {
 		
 // -------------------------- Twitter
 		
-		//TwitterSearch twitter = new TwitterSearch("Twitter\\", "Time Square");
+		TwitterSearch twitter = new TwitterSearch("Twitter\\", "Guillotiere");
 		//TwitterSearch twitter = new TwitterSearch("twitter\\", 40.757982, -73.985549, 1.5);	
 		//TwitterSearch twitter = new TwitterSearch("twitter\\",  "TimeSquare", 45.7520005, 4.8417091, 1.0);
 
-		//twitter.getTwitterRessources();
+		twitter.getTwitterRessources();
 		
 // -------------------------- Instagram
 			

@@ -14,7 +14,9 @@ public class TwitterSearch extends TwitterUtil {
 
 	private String repertoire;
 	private String requete;
-	public static final String OPTIONS =  "filter=images&count=100&include_entities=1&exclude=retweets";
+	// filter=images get only tweets having images in OPTIONS
+	//
+	public static final String OPTIONS =  "count=100&include_entities=1&exclude=retweets";
 	
 	public TwitterSearch (String repertoire, String text){
 		this.repertoire = repertoire;				
