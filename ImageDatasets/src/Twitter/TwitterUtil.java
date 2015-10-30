@@ -78,6 +78,20 @@ public abstract class TwitterUtil {
 		return new String();
 	}
 	
+	protected String getTweetID(JSONObject tweet)throws JSONException{
+		if (!tweet.isNull("id_str")){
+			return tweet.optString("id_str");
+		}
+		return new String();
+	}
+	
+	protected String getTweetText(JSONObject tweet)throws JSONException{
+		if (!tweet.isNull("text")){
+			return tweet.optString("text");
+		}
+		return new String();
+	}
+	
 	protected void getAllMedia(String tweetID, TwitterImage image) throws JSONException, IOException{
 
 		String requeteMedia = "https://api.twitter.com/1.1/statuses/show.json?id=" + tweetID ;

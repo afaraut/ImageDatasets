@@ -14,7 +14,9 @@ public class TwitterSearch extends TwitterUtil {
 
 	private String repertoire;
 	private String requete;
-	public static final String OPTIONS =  "filter=images&count=100&include_entities=1&exclude=retweets";
+	// filter=images get only tweets having images in OPTIONS
+	//
+	public static final String OPTIONS =  "count=100&include_entities=1&exclude=retweets";
 	
 	public TwitterSearch (String repertoire, String text){
 		this.repertoire = repertoire;				
@@ -94,8 +96,8 @@ public class TwitterSearch extends TwitterUtil {
 				}
 				
 				JSONObject tweet = (JSONObject) tweets.opt(i);
-				String tweetID = tweet.optString("id_str");
-				TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), tweetID, getAllHashTag(tweet));
+				String tweetID = getTweetID(tweet);
+				TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
 				
 				if (!tweet.getJSONObject("entities").isNull("media")) { // If there is media
 					idList = idList.concat(tweetID + ",");

@@ -88,10 +88,10 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
                 latestTweet = line;
                 try {
 					JSONObject tweet = new JSONObject(line);
-					String tweetID = tweet.optString("id_str");
-					TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), tweetID, getAllHashTag(tweet));
+					String tweetID = getTweetID(tweet);	
+					TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
 					if (!tweet.getJSONObject("entities").isNull("media")){
-						getAllMedia(tweet.optString("id_str"), image); // Get All Pictures
+						getAllMedia(tweetID, image); // Get All Pictures
 					}
 					else {
 						saveJSON(image); // Save json

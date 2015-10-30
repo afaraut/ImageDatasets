@@ -15,11 +15,12 @@ public class TwitterImage {
 	private String repertoire;
 	private String link;
 	private String filename;
+	private String text;
 	private String photo;
 	private List<String> hashtags;
 	private JSONObject objson;
 
-	public TwitterImage(String repertoire, String link, String id, List<String> hashtags){
+	public TwitterImage(String repertoire, String link, String text, String id, List<String> hashtags){
 		
 		this.repertoire = repertoire;
 	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
@@ -28,7 +29,7 @@ public class TwitterImage {
 		this.link = link;
 		this.hashtags = hashtags;
 		this.objson = null;
-		
+		this.text = text;
 		// Or the id by param
 		//String tmp[] = link.split("/");
 		//this.filename = tmp[tmp.length-1] + ".";
@@ -71,6 +72,7 @@ public class TwitterImage {
 		objson = new JSONObject();
 		objson.put("link", link);
 		objson.put("photo", photo);
+		objson.put("text", text);
 		objson.put("hashtags", hashtags);
 		return objson;
 	}
