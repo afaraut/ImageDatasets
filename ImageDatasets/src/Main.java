@@ -54,7 +54,7 @@ public class Main {
 		// -122.75,36.8,-121.75,37.8,-74,40,-73,41	-> San Francisco OR New York City
 		// https://dev.twitter.com/streaming/overview/request-parameters#locations
 		
-		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square, Night");
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Good night");
 		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\", 48.8539541, 2.3483307000000195);	
 		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square", 40.757982, -73.985549);	
 		

@@ -70,12 +70,16 @@ public abstract class TwitterUtil {
 		}
 		return hashtags;
 	}
-	
-	protected String getTweetURL(JSONObject tweet)throws JSONException{
-		if (!tweet.getJSONObject("entities").isNull("media")){
-			return ((JSONObject)(tweet.getJSONObject("entities").getJSONArray("media")).opt(0)).optString("expanded_url");	
+		
+	protected String getScreenName(JSONObject tweet)throws JSONException{
+		if (!tweet.getJSONObject("user").isNull("screen_name")){
+			return tweet.getJSONObject("user").optString("screen_name");	
 		}
 		return new String();
+	}
+	
+	protected String getTweetURL(JSONObject tweet)throws JSONException{
+		return "https://twitter.com/" + getScreenName(tweet) + "/status/" + getTweetID(tweet);
 	}
 	
 	protected String getTweetID(JSONObject tweet)throws JSONException{
