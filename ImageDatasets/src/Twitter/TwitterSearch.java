@@ -97,7 +97,7 @@ public class TwitterSearch extends TwitterUtil {
 				
 				JSONObject tweet = (JSONObject) tweets.opt(i);
 				String tweetID = getTweetID(tweet);
-				TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+				TwitterImage image = new TwitterImage(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
 				
 				if (!tweet.getJSONObject("entities").isNull("media")) { // If there is media
 					idList = idList.concat(tweetID + ",");

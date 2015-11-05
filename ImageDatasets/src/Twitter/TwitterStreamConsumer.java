@@ -60,7 +60,7 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
         }
         if (latitude != null && longitude != null ) {
         	String geolocation = new String (latitude + ", " + longitude);
-        	geolocation = geolocation.replace('.', ',');
+        	//geolocation = geolocation.replace('.', ',');
         	System.out.println(geolocation);
             request.addBodyParameter("locations", geolocation); // Set gelocation you'd like to track here
         }
@@ -89,13 +89,15 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
                 try {
 					JSONObject tweet = new JSONObject(line);
 					String tweetID = getTweetID(tweet);	
-					TwitterImage image = new TwitterImage(repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+					
+					TwitterImage image = new TwitterImage(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
 					if (!tweet.getJSONObject("entities").isNull("media")){
 						getAllMedia(tweetID, image); // Get All Pictures
 					}
 					else {
 						saveJSON(image); // Save json
 					}
+					System.out.println(line);
 	                tweetCount++;
 				} catch (JSONException e) {
 					System.out.println(line);

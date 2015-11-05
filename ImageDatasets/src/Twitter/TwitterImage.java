@@ -7,6 +7,12 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import Utils.GlobalesConstantes;
 
@@ -17,11 +23,13 @@ public class TwitterImage {
 	private String filename;
 	private String text;
 	private String photo;
+	private TwitterUser twitterUser;
 	private List<String> hashtags;
 	private JSONObject objson;
 
-	public TwitterImage(String repertoire, String link, String text, String id, List<String> hashtags){
+	public TwitterImage(TwitterUser twitterUser, String repertoire, String link, String text, String id, List<String> hashtags){
 		
+		this.twitterUser = twitterUser;
 		this.repertoire = repertoire;
 	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
@@ -68,8 +76,20 @@ public class TwitterImage {
 		this.objson = null;
 	}*/
 
+	public static String toPrettyFormat(String jsonString) 
+    {
+        JsonParser parser = new JsonParser();
+        JsonObject json = parser.parse(jsonString).getAsJsonObject();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String prettyJson = gson.toJson(json);
+
+        return prettyJson;
+    }
+	
 	public JSONObject generateJSON() throws JSONException {
 		objson = new JSONObject();
+		objson.put("user", twitterUser.formatToJSON());
 		objson.put("link", link);
 		objson.put("photo", photo);
 		objson.put("text", text);
@@ -78,6 +98,7 @@ public class TwitterImage {
 	}
 	
 	public void saveJSON(String filename){
+		
 		try {
 			generateJSON();
 		} catch (JSONException e1) {
@@ -85,8 +106,8 @@ public class TwitterImage {
 		}
 		FileWriter file = null;
         try {
-        	file = new FileWriter(filename);
-            file.write(objson.toString());
+        	file = new FileWriter(filename);        	 
+            file.write(toPrettyFormat(objson.toString()));
         } catch (IOException e) {
             e.printStackTrace();
  

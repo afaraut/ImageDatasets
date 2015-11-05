@@ -93,8 +93,8 @@ public class TwitterSearch4j extends TwitterUtil {
 	                }
 	                
 	                ExtendedMediaEntity[] medias = tweetById.getExtendedMediaEntities();
-	                
-	                TwitterImage image = new TwitterImage(repertoire, url, tweetById.getText(), "" + tweetById.getId(), hashtags);
+	                TwitterUser twitterUser = new TwitterUser("" + tweetById.getUser().getId(), tweetById.getUser().getName(), tweetById.getUser().getScreenName(), tweetById.getUser().getLocation(), tweetById.getUser().getURL(), tweetById.getUser().getDescription(), tweetById.getUser().getFollowersCount(), tweetById.getUser().getFriendsCount(), tweetById.getUser().getStatusesCount(), "" + tweetById.getUser().getCreatedAt(), tweetById.getUser().getLang());
+	                TwitterImage image = new TwitterImage(twitterUser, repertoire, url, tweetById.getText(), "" + tweetById.getId(), hashtags);
 	                if (medias.length == 0){
 	                	saveJSON(image); // Save json
 	                }

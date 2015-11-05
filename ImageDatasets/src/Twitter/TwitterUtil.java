@@ -58,6 +58,48 @@ public abstract class TwitterUtil {
 		}
 	}
 	
+	protected TwitterUser getUserInformation (JSONObject tweet)throws JSONException{
+		String id = new String(), name = new String(), screen_name = new String(), location = new String(), url = new String(), description = new String(), created_at = new String(), lang = new String();
+		int followers_count = 0, friends_count = 0, statuses_count = 0;
+		
+		if (!tweet.isNull("user")){
+			if (!tweet.getJSONObject("user").isNull("id_str")){
+				id = tweet.getJSONObject("user").optString("id_str");
+			}
+			if (!tweet.getJSONObject("user").isNull("name")){
+				name = tweet.getJSONObject("user").optString("name");
+			}
+			if (!tweet.getJSONObject("user").isNull("screen_name")){
+				screen_name = tweet.getJSONObject("user").optString("screen_name");
+			}
+			if (!tweet.getJSONObject("user").isNull("location")){
+				location = tweet.getJSONObject("user").optString("location");
+			}
+			if (!tweet.getJSONObject("user").isNull("url")){
+				url = tweet.getJSONObject("user").optString("url");
+			}
+			if (!tweet.getJSONObject("user").isNull("description")){
+				description = tweet.getJSONObject("user").optString("description");
+			}
+			if (!tweet.getJSONObject("user").isNull("created_at")){
+				created_at = tweet.getJSONObject("user").optString("created_at");
+			}
+			if (!tweet.getJSONObject("user").isNull("lang")){
+				lang = tweet.getJSONObject("user").optString("lang");
+			}
+			if (!tweet.getJSONObject("user").isNull("followers_count")){
+				followers_count = tweet.getJSONObject("user").optInt("followers_count");
+			}
+			if (!tweet.getJSONObject("user").isNull("friends_count")){
+				friends_count = tweet.getJSONObject("user").optInt("friends_count");
+			}
+			if (!tweet.getJSONObject("user").isNull("statuses_count")){
+				statuses_count = tweet.getJSONObject("user").optInt("statuses_count");
+			}
+		}
+		return new TwitterUser(id, name, screen_name, location, url, description, followers_count, friends_count, statuses_count, created_at, lang);	
+	}
+	
 	protected ArrayList<String> getAllHashTag(JSONObject tweet) throws JSONException{
 		ArrayList<String> hashtags = new ArrayList<String>();	
 		JSONArray json_hashtags = tweet.getJSONObject("entities").getJSONArray("hashtags");			
