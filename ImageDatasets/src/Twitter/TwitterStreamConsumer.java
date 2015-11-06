@@ -8,6 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.*;
 
+import Utils.GlobalesConstantes;
+
 public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
     private static final String STREAM_URI = "https://stream.twitter.com/1.1/statuses/filter.json";
     private String repertoire;

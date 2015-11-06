@@ -1,14 +1,30 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Date;
 
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.util.JSON;
 
 import Flickr.FlickrSearch;
 import Instagram.InstagramSearch;
 import Twitter.TwitterSearch;
 import Twitter.TwitterSearch4j;
 import Twitter.TwitterStreamConsumer;
+import Utils.MongoDB;
 
 
 public class Main {

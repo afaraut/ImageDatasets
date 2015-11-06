@@ -226,6 +226,8 @@ public abstract class TwitterUtil {
 	}
 	
 	protected void saveJSON(Tweet twImage) {	    
-		twImage.saveJSON(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName() + ".json");
+		twImage.saveJSON_FILE(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName() + ".json");
+		twImage.saveJSON_DB();
+		
 	}
 }

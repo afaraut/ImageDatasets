@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import Utils.GlobalesConstantes;
+import Utils.MongoDB;
 
 public class Tweet extends TwitterUtil {
 	
@@ -96,7 +97,16 @@ public class Tweet extends TwitterUtil {
 		return objson;
 	}*/
 	
-	public void saveJSON(String filename){
+	public void saveJSON_DB(){
+		try {
+			MongoDB.insert(objson);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void saveJSON_FILE(String filename){
 		
 		/*try {
 			generateJSON();
