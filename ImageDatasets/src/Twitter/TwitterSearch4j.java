@@ -3,10 +3,9 @@ import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import twitter4j.Query;
 
@@ -57,6 +56,24 @@ public class TwitterSearch4j extends TwitterUtil {
         return query;
 	}
 	
+	/*protected JSONObject getUserInformation (Status tweet)throws JSONException{
+
+		JSONObject obj = new JSONObject();
+		obj.put("id", "" + tweet.getUser().getId());
+		obj.put("name", tweet.getUser().getName());
+		obj.put("screen_name", tweet.getUser().getScreenName());
+		obj.put("location", tweet.getUser().getLocation());
+		obj.put("url", tweet.getUser().getURL());
+		obj.put("description", tweet.getUser().getDescription());
+		obj.put("created_at", "" + tweet.getUser().getCreatedAt());
+		obj.put("lang", tweet.getUser().getLang());
+		obj.put("followers_count", tweet.getUser().getFollowersCount());
+		obj.put("friends_count", tweet.getUser().getFriendsCount());
+		obj.put("statuses_count", tweet.getUser().getStatusesCount());        
+
+		return obj;	
+	}*/
+	
 	public void getTwitterRessources () throws TwitterException, IOException, JSONException {
 	    ConfigurationBuilder cb = new ConfigurationBuilder().setDebugEnabled(true)
 	            .setOAuthConsumerKey(TwitterConstantes.APIKEY)
@@ -85,16 +102,18 @@ public class TwitterSearch4j extends TwitterUtil {
 	                Status tweetById = twitter.showStatus(tweet.getId());
 	                String url= "https://twitter.com/" + tweetById.getUser().getScreenName() 
 	                	    + "/status/" + tweetById.getId();
-	                
+	                /*
 	                List<String> hashtags =  new ArrayList<String>();
 	                HashtagEntity[] hashtagsEntities = tweetById.getHashtagEntities();
 	                for (HashtagEntity hashtag : hashtagsEntities){
 	                	hashtags.add(hashtag.getText());
 	                }
-	                
+	                */
+	                JSONObject test = new JSONObject(TwitterObjectFactory.getRawJSON(tweet));
+	                //String json = TwitterObjectFactory.jsonStoreEnabled(tweet);
 	                ExtendedMediaEntity[] medias = tweetById.getExtendedMediaEntities();
-	                TwitterUser twitterUser = new TwitterUser("" + tweetById.getUser().getId(), tweetById.getUser().getName(), tweetById.getUser().getScreenName(), tweetById.getUser().getLocation(), tweetById.getUser().getURL(), tweetById.getUser().getDescription(), tweetById.getUser().getFollowersCount(), tweetById.getUser().getFriendsCount(), tweetById.getUser().getStatusesCount(), "" + tweetById.getUser().getCreatedAt(), tweetById.getUser().getLang());
-	                TwitterImage image = new TwitterImage(twitterUser, repertoire, url, tweetById.getText(), "" + tweetById.getId(), hashtags);
+	                //Tweet image = new Tweet(getUserInformation(tweetById), repertoire, url, tweetById.getText(), "" + tweetById.getId(), hashtags);
+	                Tweet image = new Tweet(test, repertoire, url);
 	                if (medias.length == 0){
 	                	saveJSON(image); // Save json
 	                }
@@ -102,10 +121,10 @@ public class TwitterSearch4j extends TwitterUtil {
 		                int nombreImage = 0;
 		                for (ExtendedMediaEntity m : medias){
 		                	System.out.println("Save image " + nombreImage++ + " du tweet " + currentTweet + "/" + numberOfTweet);
-							image.setPhoto(m.getMediaURL());
-							saveTwitterImage(image); // Download image
-							saveJSON(image); // Save json
+							image.addPhoto(m.getMediaURL());
 		                }
+						saveTwitterImage(image); // Download images
+						saveJSON(image); // Save json
 	                }	                    
 	            } catch (TwitterException e) {
 	                System.err.print("Failed to search tweets: " + e.getMessage());

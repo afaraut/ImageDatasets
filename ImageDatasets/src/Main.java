@@ -54,7 +54,7 @@ public class Main {
 		// -122.75,36.8,-121.75,37.8,-74,40,-73,41	-> San Francisco OR New York City
 		// https://dev.twitter.com/streaming/overview/request-parameters#locations
 		
-		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Good night");
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Have a good day");
 		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\", 48.8539541, 2.3483307000000195);	
 		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square", 40.757982, -73.985549);	
 		
@@ -86,7 +86,7 @@ public class Main {
 		// Geocode
 		// Latitude, Longitude, Radius (Here I use "km")
 		
-		//TwitterSearch twitter = new TwitterSearch("Twitter\\", "Guillotiere");
+		//TwitterSearch twitter = new TwitterSearch("Twitter\\", "Time Square");
 		//TwitterSearch twitter = new TwitterSearch("twitter\\", 40.757982, -73.985549, 1.5);	
 		//TwitterSearch twitter = new TwitterSearch("twitter\\",  "TimeSquare", 45.7520005, 4.8417091, 1.0);
 

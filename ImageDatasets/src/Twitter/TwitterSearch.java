@@ -85,7 +85,7 @@ public class TwitterSearch extends TwitterUtil {
 		}
 		int nombreDeTweet = tweets.length();
 		System.out.println("nombreDeTweet " + nombreDeTweet);
-		HashMap<String, TwitterImage> hashMapTweets = new HashMap<String, TwitterImage>();
+		HashMap<String, Tweet> hashMapTweets = new HashMap<String, Tweet>();
 	
 		do {
 			String idList = new String();
@@ -97,8 +97,8 @@ public class TwitterSearch extends TwitterUtil {
 				
 				JSONObject tweet = (JSONObject) tweets.opt(i);
 				String tweetID = getTweetID(tweet);
-				TwitterImage image = new TwitterImage(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
-				
+				//Tweet image = new Tweet(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+				Tweet image = new Tweet(tweet, repertoire, getTweetURL(tweet));
 				if (!tweet.getJSONObject("entities").isNull("media")) { // If there is media
 					idList = idList.concat(tweetID + ",");
 					hashMapTweets.put(tweetID, image);

@@ -11,8 +11,8 @@ import org.scribe.model.*;
 public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
     private static final String STREAM_URI = "https://stream.twitter.com/1.1/statuses/filter.json";
     private String repertoire;
-    private String latestTweet;
-    private long tweetCount;
+   // private String latestTweet;
+    //private long tweetCount;
 	private String text;
 	private Double latitude;
 	private Double longitude;
@@ -38,13 +38,13 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
 		this.longitude = longitude;	
 	}
 
-    public String getLatestTweet(){
+    /*public String getLatestTweet(){
         return latestTweet;
     }
 
     public long getTweetCount(){
         return tweetCount;
-    }
+    }*/
     	    
 	public BufferedReader makePostRequest(){
 				
@@ -85,20 +85,21 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
             
             String line;
             while ((line = reader.readLine()) != null) {
-                latestTweet = line;
+               // latestTweet = line;
                 try {
 					JSONObject tweet = new JSONObject(line);
-					String tweetID = getTweetID(tweet);	
+					//String tweetID = getTweetID(tweet);	
 					
-					TwitterImage image = new TwitterImage(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+					//Tweet image = new Tweet(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+					Tweet image = new Tweet(tweet, repertoire, getTweetURL(tweet));
 					if (!tweet.getJSONObject("entities").isNull("media")){
-						getAllMedia(tweetID, image); // Get All Pictures
+						getAllMedia(tweet, image); // Get All Pictures
 					}
 					else {
 						saveJSON(image); // Save json
 					}
 					System.out.println(line);
-	                tweetCount++;
+	                //tweetCount++;
 				} catch (JSONException e) {
 					System.out.println(line);
 				}
