@@ -27,12 +27,10 @@ public abstract class TwitterUtil {
 	protected static final OAuthService SERVICE = new ServiceBuilder().provider(TwitterApi.class).apiKey(TwitterConstantes.APIKEY).apiSecret(TwitterConstantes.APIKEYSECRET).build();
 	protected static final Token ACCESSTOKEN = new Token(TwitterConstantes.TOKEN, TwitterConstantes.TOKENSECRET);
 	
-	protected JSONObject makeGetRequestJSONObject(String getRequete){
-		//System.out.println("Requete...");
+	protected JSONObject makeGetRequestJSONObject(String getRequete) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, getRequete);
 		SERVICE.signRequest(ACCESSTOKEN, request);
 
-		//System.out.println("Results...");
 		try {
 			Response response = request.send();
 			return new JSONObject(response.getBody());
@@ -42,13 +40,10 @@ public abstract class TwitterUtil {
 		}
 	}
 	
-	
-	protected JSONArray makeGetRequestJSONArray(String getRequete){
-		//System.out.println("Requete...");
+	protected JSONArray makeGetRequestJSONArray(String getRequete) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, getRequete);
 		SERVICE.signRequest(ACCESSTOKEN, request);
 
-		//System.out.println("Results...");
 		try {
 			Response response = request.send();
 			return new JSONArray(response.getBody());
@@ -127,8 +122,8 @@ public abstract class TwitterUtil {
 			}
 		}
 		return obj;	
-	}*/
-	/*
+	}
+	
 	protected ArrayList<String> getAllHashTag(JSONObject tweet) throws JSONException{
 		ArrayList<String> hashtags = new ArrayList<String>();	
 		JSONArray json_hashtags = tweet.getJSONObject("entities").getJSONArray("hashtags");			
@@ -141,24 +136,30 @@ public abstract class TwitterUtil {
 		}
 		return hashtags;
 	}
-		*/
-	protected String getScreenName(JSONObject tweet)throws JSONException{
-		if (!tweet.getJSONObject("user").isNull("screen_name")){
-			return tweet.getJSONObject("user").optString("screen_name");	
+	*/
+	
+	protected String getScreenName(JSONObject tweet) {
+		try {
+			if (!tweet.getJSONObject("user").isNull("screen_name")){
+				return tweet.getJSONObject("user").optString("screen_name");	
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		return new String();
 	}
 	
-	protected String getTweetURL(JSONObject tweet)throws JSONException{
+	protected String getTweetURL(JSONObject tweet) {
 		return "https://twitter.com/" + getScreenName(tweet) + "/status/" + getTweetID(tweet);
 	}
 	
-	protected String getTweetID(JSONObject tweet)throws JSONException{
+	protected String getTweetID(JSONObject tweet) {
 		if (!tweet.isNull("id_str")){
 			return tweet.optString("id_str");
 		}
 		return new String();
 	}
+	
 	/*
 	protected String getTweetText(JSONObject tweet)throws JSONException{
 		if (!tweet.isNull("text")){
@@ -167,24 +168,29 @@ public abstract class TwitterUtil {
 		return new String();
 	}*/
 	
-	protected void getAllMedia(JSONObject tweet, Tweet image) throws JSONException, IOException{
+	protected void getAllMedia(JSONObject tweet, Tweet image){
 
 		/*String requeteMedia = "https://api.twitter.com/1.1/statuses/show.json?id=" + tweetID ;
 		JSONObject result = makeGetRequestJSONObject(requeteMedia);*/
 		System.out.println("Get the pictures from the tweet...");
 		if (!tweet.isNull("extended_entities")) {
-			JSONArray medias = tweet.getJSONObject("extended_entities").getJSONArray("media");
-			int nombreDeMedia = medias.length();
-			for (int i=0; i<nombreDeMedia; i++){
-				JSONObject jsonPhoto = (JSONObject) medias.opt(i);					
-				image.addPhoto(jsonPhoto.optString("media_url"));
+			JSONArray medias;
+			try {
+				medias = tweet.getJSONObject("extended_entities").getJSONArray("media");
+				int nombreDeMedia = medias.length();
+				for (int i=0; i<nombreDeMedia; i++){
+					JSONObject jsonPhoto = (JSONObject) medias.opt(i);					
+					image.addPhoto(jsonPhoto.optString("media_url"));
+				}
+				saveTwitterImage(image); // Download images
+				saveJSON(image); // Save json
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
-			saveTwitterImage(image); // Download images
-			saveJSON(image); // Save json
 		}
 	}
 	
-	protected void getAllMedia(HashMap<String, Tweet> hashMapTweets, String idList) throws JSONException, IOException{	
+	protected void getAllMedia(HashMap<String, Tweet> hashMapTweets, String idList){	
 		
 		String requeteMedia = "https://api.twitter.com/1.1/statuses/lookup.json?id=" + idList;	
 		JSONArray results = makeGetRequestJSONArray(requeteMedia);
@@ -198,36 +204,37 @@ public abstract class TwitterUtil {
 			
 			String tweetID = result.optString("id_str");
 			Tweet image = hashMapTweets.get(tweetID);
+			
 			if(image == null) {continue;} // Just to be sure
-			System.out.println("Get the pictures from the tweet...");
-			if (!result.isNull("extended_entities")) {
-				JSONArray medias = result.getJSONObject("extended_entities").getJSONArray("media");
-				int nombreDeMedia = medias.length();
-				for (int j=0; j<nombreDeMedia; j++){
-					JSONObject jsonPhoto = (JSONObject) medias.opt(j);					
-					image.addPhoto(jsonPhoto.optString("media_url"));
-
-				}
-				saveTwitterImage(image); // Download images
-				saveJSON(image); // Save json
-			}
+			image.addIntoJSON("requet_2_extended_entities", result);
+			getAllMedia(result, image);
 		}
 	}
 	
-	protected void saveTwitterImage(Tweet twImage) throws IOException, JSONException {
+	private String getExtensionFromURL(String url){
+		return url.substring(url.lastIndexOf(".") + 1);
+	}
+	
+	protected void saveTwitterImage(Tweet twImage) {
 		ArrayList<String> photos = twImage.getPhotos();
 		for (int i=0; i < photos.size(); i++){
-			URL url = new URL(photos.get(i));
-			System.out.println(url);
-			BufferedImage image = ImageIO.read(url);
-			String tmp = twImage.getFileName() + "_" + i + ".jpg";
-			ImageIO.write(image,"jpg", new File(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + tmp));
+			URL url;
+			try {
+				url = new URL(photos.get(i));
+				String extenstion = getExtensionFromURL(url.toString());
+				
+				BufferedImage image = ImageIO.read(url);
+				String tmp = twImage.getFileName() + "_" + i + "." + extenstion;
+				ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + tmp));
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	protected void saveJSON(Tweet twImage) {	    
 		twImage.saveJSON_FILE(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + twImage.getFileName() + ".json");
 		twImage.saveJSON_DB();
-		
 	}
 }

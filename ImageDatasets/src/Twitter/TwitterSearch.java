@@ -62,7 +62,7 @@ public class TwitterSearch extends TwitterUtil {
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	public void getTwitterRessources () throws JSONException, URISyntaxException, IOException {
+	public void getTwitterRessources () {
 					
 		JSONObject result = makeGetRequestJSONObject(requete);
 		//System.out.println(result);
@@ -78,57 +78,62 @@ public class TwitterSearch extends TwitterUtil {
 			//System.out.println("Too many requests ! You have to wait 15 minutes");
 		}
 		
-		JSONArray tweets = result.getJSONArray("statuses");
-		String next_results = null;
-		if (!result.isNull("search_metadata") && !result.getJSONObject("search_metadata").isNull("next_results")) {
-			next_results = result.getJSONObject("search_metadata").optString("next_results");
-		}
-		int nombreDeTweet = tweets.length();
-		System.out.println("nombreDeTweet " + nombreDeTweet);
-		HashMap<String, Tweet> hashMapTweets = new HashMap<String, Tweet>();
-	
-		do {
-			String idList = new String();
-			for (int i = 0; i < nombreDeTweet; i++) {
-				if (!result.isNull("errors")) { // CHECK THE ERROR CODE, because it can be a new error
-					System.out.println("Too many requests ! You have to wait 15 minutes");
-					return;
+		JSONArray tweets;
+		try {
+			tweets = result.getJSONArray("statuses");
+			String next_results = null;
+			if (!result.isNull("search_metadata") && !result.getJSONObject("search_metadata").isNull("next_results")) {
+				next_results = result.getJSONObject("search_metadata").optString("next_results");
+			}
+			int nombreDeTweet = tweets.length();
+			System.out.println("nombreDeTweet " + nombreDeTweet);
+			HashMap<String, Tweet> hashMapTweets = new HashMap<String, Tweet>();
+		
+			do {
+				String idList = new String();
+				for (int i = 0; i < nombreDeTweet; i++) {
+					if (!result.isNull("errors")) { // CHECK THE ERROR CODE, because it can be a new error
+						System.out.println("Too many requests ! You have to wait 15 minutes");
+						return;
+					}
+					
+					JSONObject tweet = (JSONObject) tweets.opt(i);
+					String tweetID = getTweetID(tweet);
+					//Tweet image = new Tweet(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+					Tweet image = new Tweet(tweet, repertoire, getTweetURL(tweet));
+					if (!tweet.getJSONObject("entities").isNull("media")) { // If there is media
+						idList = idList.concat(tweetID + ",");
+						hashMapTweets.put(tweetID, image);
+					}
+					else {
+						saveJSON(image); // Save json
+					}
 				}
 				
-				JSONObject tweet = (JSONObject) tweets.opt(i);
-				String tweetID = getTweetID(tweet);
-				//Tweet image = new Tweet(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
-				Tweet image = new Tweet(tweet, repertoire, getTweetURL(tweet));
-				if (!tweet.getJSONObject("entities").isNull("media")) { // If there is media
-					idList = idList.concat(tweetID + ",");
-					hashMapTweets.put(tweetID, image);
+				int idListLength = idList.length();
+				if (idListLength > 0) { // If there is media
+					idList =  idList.substring(0, idListLength-1); // Remove the last ","
+					getAllMedia(hashMapTweets, idList);
 				}
-				else {
-					saveJSON(image); // Save json
+				
+				if (next_results != null) { // There is still tweets
+					requete = "https://api.twitter.com/1.1/search/tweets.json" + next_results;
+					System.out.println("Request for a new page ... ");
+					result = makeGetRequestJSONObject(requete);
+					tweets = result.getJSONArray("statuses");					
+					nombreDeTweet = tweets.length();
+					if (!result.getJSONObject("search_metadata").isNull("next_results")){
+						next_results = result.getJSONObject("search_metadata").optString("next_results");
+					}
+					else {
+						next_results = null;
+					}
 				}
-			}
+			} while (next_results != null);
+			System.out.println("End of the results");
 			
-			int idListLength = idList.length();
-			if (idListLength > 0) { // If there is media
-				idList =  idList.substring(0, idListLength-1); // Remove the last ","
-				getAllMedia(hashMapTweets, idList);
-			}
-			
-			if (next_results != null) { // There is still tweets
-				requete = "https://api.twitter.com/1.1/search/tweets.json" + next_results;
-				System.out.println("Request for a new page ... ");
-				result = makeGetRequestJSONObject(requete);
-				tweets = result.getJSONArray("statuses");					
-				nombreDeTweet = tweets.length();
-				if (!result.getJSONObject("search_metadata").isNull("next_results")){
-					next_results = result.getJSONObject("search_metadata").optString("next_results");
-				}
-				else {
-					next_results = null;
-				}
-			}
-		} while (next_results != null);
-		System.out.println("End of the results");
-
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }

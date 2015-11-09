@@ -8,13 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.*;
 
-import Utils.GlobalesConstantes;
-
 public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
     private static final String STREAM_URI = "https://stream.twitter.com/1.1/statuses/filter.json";
     private String repertoire;
-   // private String latestTweet;
-    //private long tweetCount;
 	private String text;
 	private Double latitude;
 	private Double longitude;
@@ -39,15 +35,7 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
 		this.latitude = latitude;
 		this.longitude = longitude;	
 	}
-
-    /*public String getLatestTweet(){
-        return latestTweet;
-    }
-
-    public long getTweetCount(){
-        return tweetCount;
-    }*/
-    	    
+  
 	public BufferedReader makePostRequest(){
 				
         // Let's generate the request
@@ -87,12 +75,9 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
             
             String line;
             while ((line = reader.readLine()) != null) {
-               // latestTweet = line;
                 try {
 					JSONObject tweet = new JSONObject(line);
-					//String tweetID = getTweetID(tweet);	
-					
-					//Tweet image = new Tweet(getUserInformation(tweet), repertoire, getTweetURL(tweet), getTweetText(tweet), tweetID, getAllHashTag(tweet));
+					System.out.println(line);
 					Tweet image = new Tweet(tweet, repertoire, getTweetURL(tweet));
 					if (!tweet.getJSONObject("entities").isNull("media")){
 						getAllMedia(tweet, image); // Get All Pictures
@@ -100,8 +85,6 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
 					else {
 						saveJSON(image); // Save json
 					}
-					System.out.println(line);
-	                //tweetCount++;
 				} catch (JSONException e) {
 					System.out.println(line);
 				}

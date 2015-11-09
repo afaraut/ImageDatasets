@@ -76,6 +76,14 @@ public class Tweet extends TwitterUtil {
 		String tmp_str = tmp[tmp.length-1];
 		this.filename = this.filename.concat("_" + tmp_str.substring(0, tmp_str.length()-4));*/
 	}
+	
+	public void addIntoJSON(String key, Object json) {
+		try {
+			this.objson.append(key, json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static String toPrettyFormat(String jsonString) {
         JsonParser parser = new JsonParser();
@@ -98,13 +106,8 @@ public class Tweet extends TwitterUtil {
 	}*/
 	
 	public void saveJSON_DB(){
-		try {
-			MongoDB.insert(objson);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		MongoDB.insert(objson);
 	}
-	
 	
 	public void saveJSON_FILE(String filename){
 		
@@ -153,19 +156,4 @@ public class Tweet extends TwitterUtil {
 	public String getFileName(){
 		return filename;
 	}
-
-	/*public String toString() {
-		String tmp = link + "\n";
-		
-		tmp = tmp.concat("[");
-		if (hashtags.size() > 0) {
-			for (String s : hashtags)
-				tmp = tmp.concat(s + ", ");
-			tmp = tmp.substring(0, tmp.length()-2);
-		}
-		tmp = tmp.concat("]\n");
-		tmp = tmp.concat("photo : " + photo);
-		return tmp;
-	}*/
-
 }
