@@ -1,22 +1,26 @@
 package Flickr;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import Utils.GlobalesConstantes;
+import Utils.MongoDB;
+import Utils.Toolbox;
+
 public class FlickrImage {
 
-	private String link;
+	private String repertoire;
+	//private String link;
 	private String filename;
-	private String description;
 	private String photo;
-	private List<String> hashtags;
+	//private List<String> hashtags;
 	private JSONObject objson;
 	
-	public FlickrImage(String link, String photo, String description, List<String> hashtags) {
+	/*public FlickrImage(String link, String photo, String description, List<String> hashtags) {
 		this.link = link;
 		this.description = description;
 		this.photo = photo;
@@ -34,18 +38,44 @@ public class FlickrImage {
 		objson.put("photo", photo);
 		objson.put("hashtags", hashtags);
 		return objson;
+	}*/
+	
+	public FlickrImage(JSONObject tweet, String repertoire, String photo){
+		
+		this.repertoire = repertoire;
+	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
+			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
+	    }
+		this.objson = tweet;
+		addIntoJSON("url_photo", photo);
+		String tmp[] = photo.split("/");
+		String tmp_str = tmp[tmp.length-1];
+		this.filename = tmp_str.substring(0, tmp_str.length()-3);
+		this.photo = photo;
 	}
 	
-	public void saveJSON(String filename){
+	public void addIntoJSON(String key, Object json) {
 		try {
+			this.objson.append(key, json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveJSON_DB(){
+		MongoDB.insert(GlobalesConstantes.DBCOLLECTIONFLICKR, objson);
+	}
+	
+	public void saveJSON_FILE(String filename){
+		/*try {
 			generateJSON();
 		} catch (JSONException e1) {
 			e1.printStackTrace();
-		}
+		}*/
 		FileWriter file = null;
         try {
-        	file = new FileWriter(filename);
-            file.write(objson.toString());
+        	file = new FileWriter(filename);        	 
+            file.write(Toolbox.toPrettyFormat(objson.toString()));
         } catch (IOException e) {
             e.printStackTrace();
  
@@ -59,7 +89,7 @@ public class FlickrImage {
         }
 	}
 	
-	public String getDescription() {
+	/*public String getDescription() {
 		return description;
 	}
 	
@@ -69,6 +99,10 @@ public class FlickrImage {
 	
 	public List<String> getHashtags() {
 		return hashtags;
+	}*/
+	
+	public String getDirectory() {
+		return repertoire;
 	}
 	
 	public String getPhoto() {
@@ -78,18 +112,4 @@ public class FlickrImage {
 	public String getFileName(){
 		return filename;
 	}
-
-	public String toString() {
-		String tmp = link + "\n";
-		tmp = tmp.concat("Description : " +  description + "\n\n");
-		tmp = tmp.concat("[");
-		if (hashtags.size() > 0) {
-			for (String s : hashtags)
-				tmp = tmp.concat(s + ", ");
-			tmp = tmp.substring(0, tmp.length()-2);
-		}
-		tmp = tmp.concat("]\n");
-		return tmp;
-	}
-
 }

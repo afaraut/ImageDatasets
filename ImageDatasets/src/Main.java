@@ -39,10 +39,10 @@ public class Main {
 		
 // -------------------------- Flickr		
 		
-		//FlickrSearch flickr = new FlickrSearch("flickr\\",  "ilôt mazagran");
-		//FlickrSearch flickr = new FlickrSearch("flickr\\", 45.7520005, 4.8417091, 0.5);	
-		//FlickrSearch flickr = new FlickrSearch("flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);	
-		//FlickrStreamConsumer flickr = new FlickrStreamConsumer("flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);
+		//FlickrSearch flickr = new FlickrSearch("Flickr\\",  "Guillotiere");
+		//FlickrSearch flickr = new FlickrSearch("Flickr\\", 45.7520005, 4.8417091, 0.5);	
+		//FlickrSearch flickr = new FlickrSearch("Flickr\\",  "Guillotiere ilot mazagran", 45.7520005, 4.8417091, 0.5);	
+		//FlickrStreamConsumer flickr = new FlickrStreamConsumer("Flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);
 		
 		//flickr.getFlickrRessources();
 		//flickr.printFlickrNumberResult();
@@ -109,14 +109,14 @@ public class Main {
 		// Latitude, Longitude, Radius (Here I use "km")
 		
 		//TwitterSearch twitter = new TwitterSearch("Twitter\\", "Time Square");
-		//TwitterSearch twitter = new TwitterSearch("twitter\\", 40.757982, -73.985549, 1.5);	
-		//TwitterSearch twitter = new TwitterSearch("twitter\\",  "TimeSquare", 45.7520005, 4.8417091, 1.0);
+		//TwitterSearch twitter = new TwitterSearch("Twitter\\", 40.757982, -73.985549, 1.5);	
+		//TwitterSearch twitter = new TwitterSearch("Twitter\\",  "TimeSquare", 45.7520005, 4.8417091, 1.0);
 
 		//twitter.getTwitterRessources();
 		
 // -------------------------- Instagram
 			
-		//InstagramSearch instagram = new InstagramSearch("instagram\\", 43.7, 7.3333, 4);
+		//InstagramSearch instagram = new InstagramSearch("Instagram\\", 43.7, 7.3333, 4);
 		//InstagramSearch instagram = new InstagramSearch("Instagram\\", "beaulieusurmer");
 				
 		//instagram.getInstagramRessources();

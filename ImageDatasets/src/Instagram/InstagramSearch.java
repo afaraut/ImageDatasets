@@ -128,13 +128,12 @@ public class InstagramSearch {
 	}
 	
 	protected void saveInstagramImage(InstagramImage igImage){
-		URL url;
 		try {
-			url = new URL(igImage.getPhoto());
+			URL url = new URL(igImage.getPhoto());
 			String extenstion = Toolbox.getExtensionFromURL(url.toString());
 			
 			BufferedImage image = ImageIO.read(url);
-			String tmp = igImage.getFileName() + "." + extenstion;
+			String tmp = igImage.getFileName() + extenstion;
 			ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + igImage.getDirectory() + tmp));
 			
 		} catch (IOException e) {
@@ -143,7 +142,7 @@ public class InstagramSearch {
 	}
 	
 	public void saveJSON(InstagramImage image){	    
-		image.saveJSON_FILE(GlobalesConstantes.REPERTOIRE + image.getDirectory() + image.getFileName() + ".json");
+		image.saveJSON_FILE(GlobalesConstantes.REPERTOIRE + image.getDirectory() + image.getFileName() + "json");
 		image.saveJSON_DB();
 	}
 	
