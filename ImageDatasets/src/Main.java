@@ -20,7 +20,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 
 import Flickr.FlickrSearch;
-import Flickr.FlickrStreamConsumer;
 import Instagram.InstagramSearch;
 import Twitter.TwitterSearch;
 import Twitter.TwitterSearch4j;
@@ -118,9 +117,9 @@ public class Main {
 // -------------------------- Instagram
 			
 		//InstagramSearch instagram = new InstagramSearch("instagram\\", 43.7, 7.3333, 4);
-		InstagramSearch instagram = new InstagramSearch("Instagram\\", "beaulieusurmer");
+		//InstagramSearch instagram = new InstagramSearch("Instagram\\", "beaulieusurmer");
 				
-		instagram.getInstagramRessources();
+		//instagram.getInstagramRessources();
 		//instagram.printInstagramNumberResult();
 	}
 }
