@@ -20,6 +20,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 
 import Flickr.FlickrSearch;
+import Flickr.FlickrStreamConsumer;
 import Instagram.InstagramSearch;
 import Twitter.TwitterSearch;
 import Twitter.TwitterSearch4j;
@@ -42,6 +43,7 @@ public class Main {
 		//FlickrSearch flickr = new FlickrSearch("flickr\\",  "ilôt mazagran");
 		//FlickrSearch flickr = new FlickrSearch("flickr\\", 45.7520005, 4.8417091, 0.5);	
 		//FlickrSearch flickr = new FlickrSearch("flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);	
+		//FlickrStreamConsumer flickr = new FlickrStreamConsumer("flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);
 		
 		//flickr.getFlickrRessources();
 		//flickr.printFlickrNumberResult();
@@ -69,11 +71,16 @@ public class Main {
 		// -74,40,-73,41							-> New York City
 		// -122.75,36.8,-121.75,37.8,-74,40,-73,41	-> San Francisco OR New York City
 		// https://dev.twitter.com/streaming/overview/request-parameters#locations
+		// 45.640192, 4.618258, 45.954714, 5.156932  grand Lyon
 		
 		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Have a good day");
 		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\", 48.8539541, 2.3483307000000195);	
-		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square", 40.757982, -73.985549);	
-		
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\",  "Time Square", 40.757982, -73.985549);
+		//Guillotière    4.839563, 45.753759 , 4.847605,  45.758184
+		// grand Lyon: 4.618258,45.640192, 5.156932, 45.954714
+		// https://dev.twitter.com/streaming/overview/request-parameters#locations
+		//TwitterStreamConsumer streamConsumer = new TwitterStreamConsumer("Twitter Stream\\","Guillotière, Guillotiere",  4.839563, 45.753759 , 4.847605,  45.758184);	
+
         //new Thread(streamConsumer).start();
 		
 // -------------------------- Twitter
@@ -110,10 +117,10 @@ public class Main {
 		
 // -------------------------- Instagram
 			
-		//InstagramSearch instagram = new InstagramSearch("instagram\\", 40.757982, -73.985549, 500);
-		//InstagramSearch instagram = new InstagramSearch("instagram\\", "beaulieusurmer");
+		//InstagramSearch instagram = new InstagramSearch("instagram\\", 43.7, 7.3333, 4);
+		InstagramSearch instagram = new InstagramSearch("Instagram\\", "beaulieusurmer");
 				
-		//instagram.getInstagramRessources();
+		instagram.getInstagramRessources();
 		//instagram.printInstagramNumberResult();
 	}
 }

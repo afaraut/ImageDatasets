@@ -8,13 +8,9 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import Utils.GlobalesConstantes;
 import Utils.MongoDB;
+import Utils.Toolbox;
 
 public class Tweet extends TwitterUtil {
 	
@@ -84,16 +80,6 @@ public class Tweet extends TwitterUtil {
 			e.printStackTrace();
 		}
 	}
-
-	public static String toPrettyFormat(String jsonString) {
-        JsonParser parser = new JsonParser();
-        JsonObject json = parser.parse(jsonString).getAsJsonObject();
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String prettyJson = gson.toJson(json);
-
-        return prettyJson;
-    }
 	
 	/*public JSONObject generateJSON() throws JSONException {
 		objson = new JSONObject();
@@ -106,7 +92,7 @@ public class Tweet extends TwitterUtil {
 	}*/
 	
 	public void saveJSON_DB(){
-		MongoDB.insert(objson);
+		MongoDB.insert(GlobalesConstantes.DBCOLLECTIONTWITTER, objson);
 	}
 	
 	public void saveJSON_FILE(String filename){
@@ -119,7 +105,7 @@ public class Tweet extends TwitterUtil {
 		FileWriter file = null;
         try {
         	file = new FileWriter(filename);        	 
-            file.write(toPrettyFormat(objson.toString()));
+            file.write(Toolbox.toPrettyFormat(objson.toString()));
         } catch (IOException e) {
             e.printStackTrace();
  

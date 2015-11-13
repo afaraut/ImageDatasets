@@ -12,14 +12,14 @@ public class MongoDB {
 	private static MongoClient mongoClient;
 	private static MongoCollection<Document> collection;
 	
-	private static void connection(){
+	private static void connection(String collectionName){
 		mongoClient = new MongoClient(GlobalesConstantes.SERVER , GlobalesConstantes.PORT );
 		MongoDatabase db = mongoClient.getDatabase(GlobalesConstantes.DBNAME);
-		collection = db.getCollection(GlobalesConstantes.DBCOLLECTIONTWITTER);
+		collection = db.getCollection(collectionName);
 	}
 	
-	public static void insert(JSONObject object) {
-		connection();
+	public static void insert(String collectionName, JSONObject object) {
+		connection(collectionName);
 		collection.insertOne(Document.parse(object.toString()));
 		close();
 	}

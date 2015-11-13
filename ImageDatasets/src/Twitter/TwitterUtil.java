@@ -21,6 +21,7 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import Utils.GlobalesConstantes;
+import Utils.Toolbox;
 
 public abstract class TwitterUtil {
 	
@@ -210,18 +211,14 @@ public abstract class TwitterUtil {
 			getAllMedia(result, image);
 		}
 	}
-	
-	private String getExtensionFromURL(String url){
-		return url.substring(url.lastIndexOf(".") + 1);
-	}
-	
+		
 	protected void saveTwitterImage(Tweet twImage) {
 		ArrayList<String> photos = twImage.getPhotos();
 		for (int i=0; i < photos.size(); i++){
 			URL url;
 			try {
 				url = new URL(photos.get(i));
-				String extenstion = getExtensionFromURL(url.toString());
+				String extenstion = Toolbox.getExtensionFromURL(url.toString());
 				
 				BufferedImage image = ImageIO.read(url);
 				String tmp = twImage.getFileName() + "_" + i + "." + extenstion;

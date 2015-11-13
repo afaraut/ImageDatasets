@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="src/lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="src/lib/mongo-java-driver-3.0.4.jar"/>
 	<classpathentry kind="lib" path="src/lib/bson-3.0.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/jInstagram-1.1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
