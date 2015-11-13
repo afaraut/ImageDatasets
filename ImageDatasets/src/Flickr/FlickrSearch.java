@@ -21,7 +21,7 @@ import Utils.Toolbox;
 public class FlickrSearch {
 	
 	public static final String BASEURLSEARCH = "https://api.flickr.com/services/rest/?method=flickr.photos.search"
-			 								 + "&has_geo=true&per_page=500&api_key="+ FlickrConstantes.APIKEY;
+			 								 + /*"&has_geo=true" +*/ "&per_page=500&api_key="+ FlickrConstantes.APIKEY;
 	public static final String BASEURLGETINFO = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo";
 	private String repertoire;
 	private String text;
