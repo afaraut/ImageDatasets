@@ -66,14 +66,14 @@ public class InstagramImage {
         try {
         	file = new FileWriter(filename);        	 
             file.write(Toolbox.toPrettyFormat(objson.toString()));
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
  
         } finally {
             try {
 				file.flush();
 				file.close();
-			} catch (IOException e) {
+			} catch (IllegalArgumentException | IOException e) {
 				e.printStackTrace();
 			}
         }

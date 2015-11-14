@@ -24,7 +24,7 @@ public class TwitterSearch extends TwitterUtil {
 			if (text != null) {
 				requete = new URI("https", "api.twitter.com", "/1.1/search/tweets.json", OPTIONS + "&q=" + text, null).toASCIIString();
 			}
-		} catch (URISyntaxException e) {
+		} catch (IllegalArgumentException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		System.out.println(requete);
@@ -37,7 +37,7 @@ public class TwitterSearch extends TwitterUtil {
 			if (latitude != null && longitude != null && distance != null) {
 				requete = new URI("https", "api.twitter.com", "/1.1/search/tweets.json", OPTIONS + "&geocode=" + latitude + "," + longitude + "," + distance + "km", null).toASCIIString();
 			}
-		} catch (URISyntaxException e) {
+		} catch (IllegalArgumentException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		System.out.println(requete);
@@ -50,7 +50,7 @@ public class TwitterSearch extends TwitterUtil {
 			if (latitude != null && longitude != null && distance != null && text != null) {
 				requete = new URI("https", "api.twitter.com", "/1.1/search/tweets.json", OPTIONS + "&geocode=" + latitude + "," + longitude + "," + distance + "km"+ "&q=" + text,  null).toASCIIString();
 			}
-		} catch (URISyntaxException e) {
+		} catch (IllegalArgumentException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		System.out.println(requete);
@@ -132,7 +132,7 @@ public class TwitterSearch extends TwitterUtil {
 			} while (next_results != null);
 			System.out.println("End of the results");
 			
-		} catch (JSONException e) {
+		} catch (IllegalArgumentException | JSONException e) {
 			e.printStackTrace();
 		}
 	}

@@ -144,7 +144,7 @@ public abstract class TwitterUtil {
 			if (!tweet.getJSONObject("user").isNull("screen_name")){
 				return tweet.getJSONObject("user").optString("screen_name");	
 			}
-		} catch (JSONException e) {
+		} catch (IllegalArgumentException | JSONException e) {
 			e.printStackTrace();
 		}
 		return new String();
@@ -170,14 +170,10 @@ public abstract class TwitterUtil {
 	}*/
 	
 	protected void getAllMedia(JSONObject tweet, Tweet image){
-
-		/*String requeteMedia = "https://api.twitter.com/1.1/statuses/show.json?id=" + tweetID ;
-		JSONObject result = makeGetRequestJSONObject(requeteMedia);*/
 		System.out.println("Get the pictures from the tweet...");
 		if (!tweet.isNull("extended_entities")) {
-			JSONArray medias;
 			try {
-				medias = tweet.getJSONObject("extended_entities").getJSONArray("media");
+				JSONArray medias = tweet.getJSONObject("extended_entities").getJSONArray("media");
 				int nombreDeMedia = medias.length();
 				for (int i=0; i<nombreDeMedia; i++){
 					JSONObject jsonPhoto = (JSONObject) medias.opt(i);					
@@ -185,7 +181,7 @@ public abstract class TwitterUtil {
 				}
 				saveTwitterImage(image); // Download images
 				saveJSON(image); // Save json
-			} catch (JSONException e) {
+			} catch (IllegalArgumentException | JSONException e) {
 				e.printStackTrace();
 			}
 		}
@@ -199,13 +195,8 @@ public abstract class TwitterUtil {
 		
 		for (int i = 0; i < numberOfResult; i++) {
 			JSONObject result = (JSONObject) results.opt(i);
-			
-			// We have to add this result into the json
-			//
-			
 			String tweetID = result.optString("id_str");
 			Tweet image = hashMapTweets.get(tweetID);
-			
 			if(image == null) {continue;} // Just to be sure
 			image.addIntoJSON("requet_2_extended_entities", result);
 			getAllMedia(result, image);
@@ -215,16 +206,15 @@ public abstract class TwitterUtil {
 	protected void saveTwitterImage(Tweet twImage) {
 		ArrayList<String> photos = twImage.getPhotos();
 		for (int i=0; i < photos.size(); i++){
-			URL url;
 			try {
-				url = new URL(photos.get(i));
+				URL url = new URL(photos.get(i));
 				String extenstion = Toolbox.getExtensionFromURL(url.toString());
 				
 				BufferedImage image = ImageIO.read(url);
 				String tmp = twImage.getFileName() + "_" + i + "." + extenstion;
 				ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + twImage.getDirectory() + tmp));
 				
-			} catch (IOException e) {
+			} catch (IllegalArgumentException | IOException e) {
 				e.printStackTrace();
 			}
 		}

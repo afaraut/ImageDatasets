@@ -59,9 +59,7 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
 		longitude_tr = longitud_tr;
 		
 	}
-	
-	
-	
+		
 	public BufferedReader makePostRequest(){
 				
         // Let's generate the request
@@ -111,12 +109,12 @@ public class TwitterStreamConsumer extends TwitterUtil implements Runnable {
 					else {
 						saveJSON(image); // Save json
 					}
-				} catch (JSONException e) {
+				} catch (IllegalArgumentException | JSONException e) {
 					if (line.length()>3) System.out.println("l:"+line);
 				}
             }
         }
-        catch (IOException e){
+        catch (IllegalArgumentException | IOException e){
             e.printStackTrace();
         }
     }

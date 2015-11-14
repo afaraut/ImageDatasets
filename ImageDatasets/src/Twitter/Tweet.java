@@ -51,7 +51,7 @@ public class Tweet extends TwitterUtil {
 		try {
 			this.objson.append("link", link);
 			this.filename = getTweetID(tweet);
-		} catch (JSONException e1) {
+		} catch (IllegalArgumentException | JSONException e1) {
 			e1.printStackTrace();
 		}
 		photos = new ArrayList<String>();
@@ -76,7 +76,7 @@ public class Tweet extends TwitterUtil {
 	public void addIntoJSON(String key, Object json) {
 		try {
 			this.objson.append(key, json);
-		} catch (JSONException e) {
+		} catch (IllegalArgumentException | JSONException e) {
 			e.printStackTrace();
 		}
 	}
@@ -106,14 +106,14 @@ public class Tweet extends TwitterUtil {
         try {
         	file = new FileWriter(filename);        	 
             file.write(Toolbox.toPrettyFormat(objson.toString()));
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
  
         } finally {
             try {
 				file.flush();
 				file.close();
-			} catch (IOException e) {
+			} catch (IllegalArgumentException | IOException e) {
 				e.printStackTrace();
 			}
         }

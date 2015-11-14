@@ -126,7 +126,7 @@ public class TwitterSearch4j extends TwitterUtil {
 						saveTwitterImage(image); // Download images
 						saveJSON(image); // Save json
 	                }	                    
-	            } catch (TwitterException e) {
+	            } catch (IllegalArgumentException | TwitterException e) {
 	                System.err.print("Failed to search tweets: " + e.getMessage());
 	                return;
 	            }

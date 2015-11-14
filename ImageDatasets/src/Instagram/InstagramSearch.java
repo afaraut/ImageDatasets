@@ -75,7 +75,7 @@ public class InstagramSearch {
 					result = new JSONObject(new JSONTokener(inputStream));				
 				}
 				inputStream.close();
-			} catch (IOException | JSONException e){
+			} catch (IllegalArgumentException | IOException | JSONException e){
 				e.printStackTrace();
 			}
 	    }
@@ -120,7 +120,7 @@ public class InstagramSearch {
 					bool = nombreDeMessage > 1 ? true : false;
 				}
 				inputStream.close();
-			} catch (IOException | JSONException e) {
+			} catch (IllegalArgumentException | IOException | JSONException e) {
 				e.printStackTrace();
 			}
 	    }
@@ -136,7 +136,7 @@ public class InstagramSearch {
 			String tmp = igImage.getFileName() + extenstion;
 			ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + igImage.getDirectory() + tmp));
 			
-		} catch (IOException e) {
+		} catch (IllegalArgumentException | IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -180,7 +180,7 @@ public class InstagramSearch {
 					result = new JSONObject(new JSONTokener(inputStream));				
 				}
 				inputStream.close();
-			} catch (IOException | JSONException e) {
+			} catch (IllegalArgumentException | IOException | JSONException e) {
 				e.printStackTrace();
 			}
 	    }	    
@@ -221,7 +221,7 @@ public class InstagramSearch {
 					bool = nombreDeMessage > 1 ? true : false;
 				}
 				inputStream.close();
-			} catch (IOException | JSONException e) {
+			} catch (IllegalArgumentException | IOException | JSONException e) {
 				e.printStackTrace();
 			}
 	    }

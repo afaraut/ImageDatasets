@@ -40,7 +40,7 @@ public class FlickrSearch {
 		if (text != null) {
 			try {
 				query += "&text='" + URLEncoder.encode(text + "'", "UTF-8");
-			} catch (UnsupportedEncodingException e) {
+			} catch (IllegalArgumentException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		}
@@ -71,7 +71,7 @@ public class FlickrSearch {
 			if (text != null && latitude != null && longitude != null && distance != null) {
 				query += "&text='" + URLEncoder.encode(text + "'", "UTF-8") + "&lat=" + latitude + "&lon=" + longitude + "&radius=" + distance;
 			}
-		} catch (UnsupportedEncodingException e) {
+		} catch (IllegalArgumentException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		query += "&format=json&nojsoncallback=1";
@@ -84,7 +84,7 @@ public class FlickrSearch {
 			JSONObject result = new JSONObject(new JSONTokener(inputStream));
 			return result.getJSONObject("photos").optInt("total");
 			
-		} catch (JSONException | IOException e) {
+		} catch (IllegalArgumentException | JSONException | IOException e) {
 			e.printStackTrace();
 		}
 		return 0;
@@ -116,7 +116,7 @@ public class FlickrSearch {
 			else {
 				return "https://farm" + farm + ".staticflickr.com/" + server + "/" + id + "_" + secret + "_b.jpg";
 			}
-		} catch (JSONException e) {
+		} catch (IllegalArgumentException | JSONException e) {
 			e.printStackTrace();
 		}
 		return new String();
@@ -158,7 +158,7 @@ public class FlickrSearch {
 				count = result.getJSONObject("photos").optInt("perpage");
 			}
 			inputStream.close();
-		} catch (JSONException | IOException e) {
+		} catch (IllegalArgumentException | JSONException | IOException e) {
 			e.printStackTrace();
 		}
 		System.out.println("End of result ...");
@@ -173,7 +173,7 @@ public class FlickrSearch {
 			String tmp = fkImage.getFileName() + extenstion;
 			ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + fkImage.getDirectory() + tmp));
 			
-		} catch (IOException e) {
+		} catch (IllegalArgumentException | IOException e) {
 			e.printStackTrace();
 		}
 	}

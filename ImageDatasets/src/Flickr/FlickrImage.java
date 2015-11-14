@@ -57,7 +57,7 @@ public class FlickrImage {
 	public void addIntoJSON(String key, Object json) {
 		try {
 			this.objson.append(key, json);
-		} catch (JSONException e) {
+		} catch (IllegalArgumentException | JSONException e) {
 			e.printStackTrace();
 		}
 	}
@@ -76,14 +76,14 @@ public class FlickrImage {
         try {
         	file = new FileWriter(filename);        	 
             file.write(Toolbox.toPrettyFormat(objson.toString()));
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
  
         } finally {
             try {
 				file.flush();
 				file.close();
-			} catch (IOException e) {
+			} catch (IllegalArgumentException | IOException e) {
 				e.printStackTrace();
 			}
         }
