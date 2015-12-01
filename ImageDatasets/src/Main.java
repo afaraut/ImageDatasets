@@ -41,8 +41,7 @@ public class Main {
 		
 		//FlickrSearch flickr = new FlickrSearch("Flickr\\",  "Guillotiere");
 		//FlickrSearch flickr = new FlickrSearch("Flickr\\", 45.7520005, 4.8417091, 0.5);	
-		//FlickrSearch flickr = new FlickrSearch("Flickr\\",  "Guillotiere ilot mazagran", 45.7520005, 4.8417091, 0.5);	
-		//FlickrStreamConsumer flickr = new FlickrStreamConsumer("Flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);
+		//FlickrSearch flickr = new FlickrSearch("Flickr\\",  "Time Square", 40.757982, -73.985549, 0.5);
 		
 		//flickr.getFlickrRessources();
 		//flickr.printFlickrNumberResult();

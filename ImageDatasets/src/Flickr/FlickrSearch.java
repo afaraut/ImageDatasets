@@ -1,15 +1,15 @@
 package Flickr;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-
-import javax.imageio.ImageIO;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+	
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -167,13 +167,11 @@ public class FlickrSearch {
 	protected void saveFlickrImage(FlickrImage fkImage){
 		try {
 			URL url = new URL(fkImage.getPhoto());
-			String extenstion = Toolbox.getExtensionFromURL(url.toString());
-			
-			BufferedImage image = ImageIO.read(url);
-			String tmp = fkImage.getFileName() + extenstion;
-			ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + fkImage.getDirectory() + tmp));
-			
-		} catch (IllegalArgumentException | IOException e) {
+		    String extension = Toolbox.getExtensionFromURL(url.toString());
+		    String filename = fkImage.getFileName() + extension;
+		    Path targetPath = new File(GlobalesConstantes.REPERTOIRE + fkImage.getDirectory() + filename).toPath();
+		    Files.copy(url.openStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

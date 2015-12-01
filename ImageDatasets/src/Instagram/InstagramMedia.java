@@ -3,6 +3,7 @@ package Instagram;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.JSONObject;
 
@@ -10,14 +11,16 @@ import Utils.GlobalesConstantes;
 import Utils.MongoDB;
 import Utils.Toolbox;
 
-public class InstagramImage {
+public class InstagramMedia {
 	
 	private String repertoire;
 	//private String link;
 	private String filename;
-	private String photo;
+	//private String photo;
+	//private String video;
 	//private List<String> hashtags;
 	private JSONObject objson;
+	private ArrayList<String> media;
 	
 	/*
 	public InstagramImage(String link, String photo, List<String> hashtags){
@@ -30,18 +33,25 @@ public class InstagramImage {
 		this.objson = null;
 	}*/
 	
-	public InstagramImage(JSONObject tweet, String repertoire, String photo){
+	public InstagramMedia(JSONObject post, String repertoire/*, String photo, String video*/){
 		
 		this.repertoire = repertoire;
 	    if(!new File(GlobalesConstantes.REPERTOIRE + repertoire).exists()){
 			new File(GlobalesConstantes.REPERTOIRE + repertoire).mkdirs();
 	    }
-		this.objson = tweet;
+		this.objson = post;
 
-		String tmp[] = photo.split("/");
-		String tmp_str = tmp[tmp.length-1];
-		this.filename = tmp_str.substring(0, tmp_str.length()-3);
-		this.photo = photo;
+		if (!post.isNull("id")){
+			this.filename = post.optString("id");
+		}
+		else {
+			this.filename = "errorfilename";
+		}
+		media = new ArrayList<String>();
+	}
+	
+	public void addMedium(String medium){
+		this.media.add(medium);
 	}
 	
 	/*public JSONObject generateJSON() throws JSONException {
@@ -87,14 +97,14 @@ public class InstagramImage {
 		return hashtags;
 	}*/
 
+	public ArrayList<String> getMedia() {
+		return media;
+	}
+	
 	public String getDirectory() {
 		return repertoire;
 	}
 	
-	public String getPhoto() {
-		return photo;
-	}
-
 	public String getFileName(){
 		return filename;
 	}

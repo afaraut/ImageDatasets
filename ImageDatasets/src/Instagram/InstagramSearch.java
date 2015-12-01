@@ -1,12 +1,13 @@
 package Instagram;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,10 +60,17 @@ public class InstagramSearch {
 					for (int i = 0; i < nombreDeMessage; i++){
 						JSONObject instagramPost = (JSONObject) instagramPosts.opt(i);
 						System.out.println("Get the pictures from Instagram... [" + new Integer(i+1) + "/" + nombreDeMessage + "]");
+						InstagramMedia media = new InstagramMedia(instagramPost, repertoire);
+
 						String url_image = instagramPost.getJSONObject("images").getJSONObject("standard_resolution").optString("url");
-						InstagramImage image = new InstagramImage(instagramPost, repertoire, url_image);
-						saveInstagramImage(image); // Download image
-						saveJSON(image); // Save json
+						media.addMedium(url_image);
+						
+						if (instagramPost.optString("type").equals("video")){ // It's not a picture, It's a video
+							String url_video = instagramPost.getJSONObject("videos").getJSONObject("standard_resolution").optString("url");
+							media.addMedium(url_video);
+						}
+						saveInstagramMedia(media); // Download image
+						saveJSON(media); // Save json
 					}
 					System.out.println("... Nouvelle page ...");
 					
@@ -101,10 +109,18 @@ public class InstagramSearch {
 							min_timestamp = created_time;
 						}
 						System.out.println("Get the pictures from Instagram... [" + new Integer(i+1) + "/" + nombreDeMessage + "]");
+						InstagramMedia media = new InstagramMedia(instagramPost, repertoire);
+
 						String url_image = instagramPost.getJSONObject("images").getJSONObject("standard_resolution").optString("url");
-						InstagramImage image = new InstagramImage(instagramPost, repertoire, url_image);
-						saveInstagramImage(image); // Download image
-						saveJSON(image); // Save json
+						media.addMedium(url_image);
+						
+						if (instagramPost.optString("type").equals("video")){ // It's not a picture, It's a video
+							String url_video = instagramPost.getJSONObject("videos").getJSONObject("standard_resolution").optString("url");
+							media.addMedium(url_video);
+						}
+						saveInstagramMedia(media); // Download image
+						saveJSON(media); // Save json
+						
 					}			
 					query = "https://api.instagram.com/v1/media/search?client_id=" + InstagramConstantes.CLIENTID + "&lat="+latitude+"&lng="+longitude+"&distance=" + distance + "&max_timestamp=" + min_timestamp;
 
@@ -126,23 +142,24 @@ public class InstagramSearch {
 	    }
 	    System.out.println("End of result ...");
 	}
-	
-	protected void saveInstagramImage(InstagramImage igImage){
-		try {
-			URL url = new URL(igImage.getPhoto());
-			String extenstion = Toolbox.getExtensionFromURL(url.toString());
-			
-			BufferedImage image = ImageIO.read(url);
-			String tmp = igImage.getFileName() + extenstion;
-			ImageIO.write(image, extenstion, new File(GlobalesConstantes.REPERTOIRE + igImage.getDirectory() + tmp));
-			
-		} catch (IllegalArgumentException | IOException e) {
-			e.printStackTrace();
+
+	public static void saveInstagramMedia(InstagramMedia igImage) {
+		ArrayList<String> media = igImage.getMedia();
+		for (int i=0; i < media.size(); i++){
+			try {
+				URL url = new URL(media.get(i));
+			    String extension = Toolbox.getExtensionFromURL(url.toString());
+			    String filename = igImage.getFileName() + "." + extension;
+			    Path targetPath = new File(GlobalesConstantes.REPERTOIRE + igImage.getDirectory() + filename).toPath();
+			    Files.copy(url.openStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	public void saveJSON(InstagramImage image){	    
-		image.saveJSON_FILE(GlobalesConstantes.REPERTOIRE + image.getDirectory() + image.getFileName() + "json");
+	public void saveJSON(InstagramMedia image){	    
+		image.saveJSON_FILE(GlobalesConstantes.REPERTOIRE + image.getDirectory() + image.getFileName() + "." +  "json");
 		image.saveJSON_DB();
 	}
 	
