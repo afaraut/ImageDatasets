@@ -63,7 +63,7 @@ public class InstagramMedia {
 	}*/
 	
 	public void saveJSON_DB(){
-		MongoDB.insert(GlobalesConstantes.DBCOLLECTIONINSTAGRAM, objson);
+		MongoDB.insert(GlobalesConstantes.DBNAME, GlobalesConstantes.DBCOLLECTIONINSTAGRAM, objson);
 	}
 	
 	public void saveJSON_FILE(String filename){

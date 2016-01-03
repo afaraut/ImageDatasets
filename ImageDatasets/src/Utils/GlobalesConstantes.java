@@ -3,6 +3,11 @@ package Utils;
 public class GlobalesConstantes {
 	public static final String REPERTOIRE = "D:\\ImageDatasets\\";
 	
+	public static enum SOCIAL_NETWORK { 
+        INSTAGRAM ,
+        TWITTER ,
+        FLICKR
+    };
 	
 	/// ----- Database
 	public static final String SERVER = "localhost";

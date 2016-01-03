@@ -15,6 +15,7 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
@@ -120,6 +121,7 @@ public class Main {
 				
 		//instagram.getInstagramRessources();
 		//instagram.printInstagramNumberResult();
+		
 	}
 }
 

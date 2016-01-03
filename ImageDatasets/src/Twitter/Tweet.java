@@ -49,7 +49,7 @@ public class Tweet extends TwitterUtil {
 	    }
 		this.objson = tweet;
 		try {
-			this.objson.append("link", link);
+			this.objson.accumulate("link", link);
 			this.filename = getTweetID(tweet);
 		} catch (IllegalArgumentException | JSONException e1) {
 			e1.printStackTrace();
@@ -92,7 +92,7 @@ public class Tweet extends TwitterUtil {
 	}*/
 	
 	public void saveJSON_DB(){
-		MongoDB.insert(GlobalesConstantes.DBCOLLECTIONTWITTER, objson);
+		MongoDB.insert(GlobalesConstantes.DBNAME, GlobalesConstantes.DBCOLLECTIONTWITTER, objson);
 	}
 	
 	public void saveJSON_FILE(String filename){

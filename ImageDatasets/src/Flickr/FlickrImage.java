@@ -56,14 +56,14 @@ public class FlickrImage {
 	
 	public void addIntoJSON(String key, Object json) {
 		try {
-			this.objson.append(key, json);
+			this.objson.accumulate(key, json);
 		} catch (IllegalArgumentException | JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void saveJSON_DB(){
-		MongoDB.insert(GlobalesConstantes.DBCOLLECTIONFLICKR, objson);
+		MongoDB.insert(GlobalesConstantes.DBNAME, GlobalesConstantes.DBCOLLECTIONFLICKR, objson);
 	}
 	
 	public void saveJSON_FILE(String filename){
