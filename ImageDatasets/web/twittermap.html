@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <title>Map Twitter</title>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+    <style>
+
+        html, body, #content {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .map-canvas {
+            height: 100%;
+            width : 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+
+    </style>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script src="data.js"></script>
+    <script type="text/babel">
+
+    var getRandomColor = function() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var prev_infowindow = false; 
+
+    var TwitterGoogleMap = React.createClass({  
+        getDefaultProps: function () {
+            return {
+                initialZoom: 6,
+                mapCenterLat: 46.498392,
+                mapCenterLng: 3.032227,
+            };
+        },
+        componentDidMount: function () {
+            var _this = this;
+            var mapOptions = {
+                center: new google.maps.LatLng(this.props.mapCenterLat, this.props.mapCenterLng),
+                zoom: this.props.initialZoom
+            },
+            map = new google.maps.Map(ReactDOM.findDOMNode(this), mapOptions);
+
+            var polyPoints = [];
+            
+            mapse.points.map(function (point) { 
+                var _user = point.user;     
+                var color = getRandomColor();
+                point.places.map(function (p) {
+                    _this.createMarker(map, p, _user, color);
+                    polyPoints.push(new google.maps.LatLng(p.geo.latitude, p.geo.longitude));
+                });
+                _this.createPolyline(map, polyPoints, color);
+                polyPoints = [];
+            });
+
+            this.setState({map: map});
+        },  
+        createPolyline: function(map, points, color) {
+            var optionsPolyline = {
+                map: map,
+                path: points,
+                strokeColor : color
+            };
+            var maPolyline = new google.maps.Polyline( optionsPolyline );
+        },
+        createMarker: function(map, point, user, color) {
+            var _this = this;
+            var geo = point.geo;
+            var _color = color.substring(1, color.length);
+            var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + _color,
+                    new google.maps.Size(21, 34),
+                    new google.maps.Point(0,0),
+                    new google.maps.Point(10, 34));
+
+            var marker = new google.maps.Marker({position: new google.maps.LatLng(geo.latitude, geo.longitude), title: point.created_at + " - " +user.screen_name, map: map, icon : pinImage});
+
+            google.maps.event.addListener(marker, 'click', function() {
+                var div = document.createElement('div');
+                ReactDOM.render(_this.renderInfoWindow(point.text), div );
+                var infowindow = new google.maps.InfoWindow();
+                infowindow.setContent( div );
+
+                if( prev_infowindow ) {
+                   prev_infowindow.close();
+                }
+                prev_infowindow = infowindow;
+
+                infowindow.open(map, this);
+            });
+        },
+        renderInfoWindow: function(content) {
+            return (
+                <div> {content} !</div>
+            );
+        },  
+        render: function () {
+            return (
+                <div className='map-canvas'></div>
+            );
+        }
+    });
+
+    ReactDOM.render(
+        <TwitterGoogleMap />,
+        document.getElementById('content')
+    );
+
+    </script>
+  </body>
+</html>
