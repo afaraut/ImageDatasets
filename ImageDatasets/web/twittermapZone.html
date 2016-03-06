@@ -28,7 +28,7 @@
   </head>
   <body>
     <div id="content"></div>
-    <script src="data_tw.js"></script>
+    <script src="data_z.js"></script>
     <script type="text/babel">
 
     var getRandomColor = function() {
@@ -45,18 +45,31 @@
     var TwitterGoogleMap = React.createClass({  
         getDefaultProps: function () {
             return {
-                initialZoom: 6,
-                mapCenterLat: 46.498392,
-                mapCenterLng: 3.032227,
+                initialZoom: 13,
             };
         },
         componentDidMount: function () {
             var _this = this;
             var mapOptions = {
-                center: new google.maps.LatLng(this.props.mapCenterLat, this.props.mapCenterLng),
+                center: new google.maps.LatLng((mapse.rect.pointN + mapse.rect.pointS)/2, (mapse.rect.pointW + mapse.rect.pointE)/2),
                 zoom: this.props.initialZoom
             },
             map = new google.maps.Map(ReactDOM.findDOMNode(this), mapOptions);
+
+            var rectangle = new google.maps.Rectangle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.4,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.2,
+                map: map,
+                bounds: {
+                  north: mapse.rect.pointN,
+                  south: mapse.rect.pointS,
+                  east: mapse.rect.pointE,
+                  west: mapse.rect.pointW
+                }
+            });
 
             var polyPoints = [];
             
